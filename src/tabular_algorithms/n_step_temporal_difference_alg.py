@@ -1,6 +1,8 @@
 import numpy as np
 
-from tabular_algorithms.tabular_rl_algorithms_base import ModelFreeTabularPredictionAlgBase
+from tabular_algorithms.tabular_rl_algorithms_base import (
+    ModelFreeTabularPredictionAlgBase,
+)
 
 
 class NStepTemporalDifferenceAlg(ModelFreeTabularPredictionAlgBase):
@@ -8,8 +10,12 @@ class NStepTemporalDifferenceAlg(ModelFreeTabularPredictionAlgBase):
     Defines N-step temporal difference prediction algorithm.
     """
 
-    def __init__(self, num_steps, gamma, learning_rate_fcn, defaulit_state_value_fcn_value):
-        super(NStepTemporalDifferenceAlg, self).__init__(gamma, learning_rate_fcn, defaulit_state_value_fcn_value)
+    def __init__(
+        self, num_steps, gamma, learning_rate_fcn, defaulit_state_value_fcn_value
+    ):
+        super(NStepTemporalDifferenceAlg, self).__init__(
+            gamma, learning_rate_fcn, defaulit_state_value_fcn_value
+        )
 
         self.num_steps = num_steps
         self.discount_factor_power_array = None
@@ -17,7 +23,9 @@ class NStepTemporalDifferenceAlg(ModelFreeTabularPredictionAlgBase):
         self.__initialize()
 
     def __initialize(self):
-        self.discount_factor_power_array = np.power(self.gamma, np.arange(self.num_steps + 1))
+        self.discount_factor_power_array = np.power(
+            self.gamma, np.arange(self.num_steps + 1)
+        )
 
     def predict(
         self,
@@ -61,33 +69,52 @@ class NStepTemporalDifferenceAlg(ModelFreeTabularPredictionAlgBase):
                         print(f"reward_list: {reward_list}")
 
                 if t >= self.num_steps - 1:
-                    n_reward_array = np.array(reward_list[t - self.num_steps + 1 : t + 1])
+                    n_reward_array = np.array(
+                        reward_list[t-self.num_steps+1:t+1]
+                    )
 
                     if n_reward_array.size == 0:
                         break
 
-                    G = (n_reward_array * self.discount_factor_power_array[: n_reward_array.size]).sum()
+                    G = (
+                        n_reward_array
+                        * self.discount_factor_power_array[: n_reward_array.size]
+                    ).sum()
 
                     tail_state_str = ""
                     if t + 1 < len(state_list):
                         tail_state = state_list[t + 1]
-                        G += self.discount_factor_power_array[-1] * self.state_value_fcn_dict[tail_state]
+                        G += (
+                            self.discount_factor_power_array[-1]
+                            * self.state_value_fcn_dict[tail_state]
+                        )
                         tail_state_str = f", tail state: {str(tail_state)}"
 
                     state_updated = state_list[t - self.num_steps + 1]
 
                     if debug_mode:
-                        print(f"\tupdated state: {state_updated}, G: {G}{tail_state_str}")
+                        print(
+                            f"\tupdated state: {state_updated}, G: {G}{tail_state_str}"
+                        )
 
                     learning_rate = self.get_learning_rate(iter_num, episode_num)
 
-                    current_state_value_fcn_value = self.state_value_fcn_dict[state_updated]
-                    self.state_value_fcn_dict[state_updated] += learning_rate * (G - current_state_value_fcn_value)
+                    current_state_value_fcn_value = self.state_value_fcn_dict[
+                        state_updated
+                    ]
+                    self.state_value_fcn_dict[state_updated] += learning_rate * (
+                        G - current_state_value_fcn_value
+                    )
 
                     if debug_mode:
-                        print(f'\tprev. val: {current_state_value_fcn_value:.2f}', end=', ')
-                        print(f'G: {G}', end=', ')
-                        print(f'updated val: {self.state_value_fcn_dict[state_updated]:.2f}')
+                        print(
+                            f"\tprev. val: {current_state_value_fcn_value:.2f}",
+                            end=", ",
+                        )
+                        print(f"G: {G}", end=", ")
+                        print(
+                            f"updated val: {self.state_value_fcn_dict[state_updated]:.2f}"
+                        )
 
                     iter_num += 1
 
@@ -122,7 +149,9 @@ if __name__ == "__main__":
             state_value_array[state - 1] = value
 
         true_state_value_array = np.linspace(
-            random_walk_env.get_leftmost_reward(), random_walk_env.get_rightmost_reward(), num_states + 2
+            random_walk_env.get_leftmost_reward(),
+            random_walk_env.get_rightmost_reward(),
+            num_states + 2,
         )
 
         err_array = true_state_value_array[1:-1] - state_value_array
@@ -130,8 +159,7 @@ if __name__ == "__main__":
         return np.linalg.norm(err_array) / np.sqrt(err_array.size)
 
     from environment.environments import RandomWalkEnvironment
-    from policy.policies import EquallyProbableRandomPolicySampler
-    from rl_utils.utils import get_pretty_json_str
+    from policy.equally_probable_random_policy_sampler import EquallyProbableRandomPolicySampler
 
     gamma = 1.0
     num_plays = 10
@@ -143,7 +171,7 @@ if __name__ == "__main__":
     # td0 = TemporalDifference0Alg(1.0, 0.1, 0.5)
 
     # test = "rms_with_alpha_sweep"
-    test = 'draw_state_values'
+    test = "draw_state_values"
 
     if test == "rms_with_alpha_sweep":
         import pickle
@@ -173,7 +201,10 @@ if __name__ == "__main__":
                 print(f"alpha: {alpha:.2f}: ", end="")
                 learning_rate_strategy = alpha
                 tdn = NStepTemporalDifferenceAlg(
-                    num_steps, gamma, learning_rate_strategy, defaulit_state_value_fcn_value
+                    num_steps,
+                    gamma,
+                    learning_rate_strategy,
+                    defaulit_state_value_fcn_value,
                 )
 
                 rms_error_list = list()
@@ -188,14 +219,18 @@ if __name__ == "__main__":
                             max_num_transitions_per_episode,
                         )
 
-                        rms_error = get_rms_error(random_walk_environment, tdn.get_state_value_fcn_dict())
+                        rms_error = get_rms_error(
+                            random_walk_environment, tdn.get_state_value_fcn_dict()
+                        )
                         rms_error_list.append(rms_error)
 
                 mean_rms_error_list.append(np.array(rms_error_list).mean())
                 print(f"Mean RMS error: {mean_rms_error_list[-1]:.2f}")
 
             save_obj = (alpha_array, mean_rms_error_list)
-            save_file_name = f"n_step_test_results_with_random_walk_with_n_step_{num_steps}.pkl"
+            save_file_name = (
+                f"n_step_test_results_with_random_walk_with_n_step_{num_steps}.pkl"
+            )
             with open(save_file_name, "wb") as fid:
                 pickle.dump(save_obj, fid)
 
@@ -207,7 +242,10 @@ if __name__ == "__main__":
         fig, ax = plt.subplots()
 
         for file_name in os.listdir(os.curdir):
-            m = re.match(r"^n_step_test_results_with_random_walk_with_n_step_(\d+).pkl$", file_name)
+            m = re.match(
+                r"^n_step_test_results_with_random_walk_with_n_step_(\d+).pkl$",
+                file_name,
+            )
             if m:
                 print(f"reading `{file_name}`")
                 num_steps = int(m.group(1))
@@ -267,10 +305,16 @@ if __name__ == "__main__":
 
             state_value_fcn_dict = tdn.get_state_value_fcn_dict()
             # print(get_pretty_json_str(state_value_fcn_dict))
-            print(f"RMS error: {get_rms_error(random_walk_environment, state_value_fcn_dict):.2f}")
+            print(
+                f"RMS error: {get_rms_error(random_walk_environment, state_value_fcn_dict):.2f}"
+            )
 
             random_walk_environment.draw_state_value_fcn_values(
-                ax, state_value_fcn_dict, "o-", label=total_num_episodes, alpha=((idx + 1.0) / num_plays) ** 2
+                ax,
+                state_value_fcn_dict,
+                "o-",
+                label=total_num_episodes,
+                alpha=((idx + 1.0) / num_plays) ** 2,
             )
 
         ax.legend()

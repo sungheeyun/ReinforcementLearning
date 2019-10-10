@@ -1,3 +1,4 @@
+from typing import Union
 from collections import defaultdict
 
 import numpy as np
@@ -5,27 +6,34 @@ from scipy import interpolate
 from matplotlib import pyplot as plt
 from matplotlib import cm
 
-from environment.environment_base import EnvironmentBase
+from environment.deterministic_environment import DeterministicEnvironment
 
 
-class RandomWalkEnvironment(EnvironmentBase):
+class RandomWalkEnvironment(DeterministicEnvironment):
     """
     Random work Markov reward process (MRP) as described in Example 6.2 of Sutton & Barto, 2018.
     """
 
     all_action_tuple = ("left", "right")
 
-    def __init__(self, num_nodes, leftmost_reward=0.0, rightmost_reward=1.0):
+    def __init__(
+            self,
+            num_nodes: int,
+            leftmost_reward: Union[float, int] = 0.0,
+            rightmost_reward: Union[float, int] = 1.0
+    ):
         super(RandomWalkEnvironment, self).__init__()
-        self.num_nodes = num_nodes
-        self.leftmost_reward = float(leftmost_reward)
-        self.rightmost_reward = float(rightmost_reward)
+        self.num_nodes: int = num_nodes
+        self.leftmost_reward: float = float(leftmost_reward)
+        self.rightmost_reward: float = float(rightmost_reward)
+
+        self.current_state: int = None
 
     def reset(self):
         self.current_state = int((self.num_nodes + 1) / 2)
         return self.current_state, None
 
-    def get_state(self):
+    def get_current_state(self):
         return self.current_state, None
 
     def set_state(self, state):
@@ -93,7 +101,7 @@ class RandomWalkEnvironment(EnvironmentBase):
             ax.plot(x_array, y_array, label=f"{drawing_label}_{action}", *pargs, **kargs)
 
 
-class GridWorld(EnvironmentBase):
+class GridWorld(DeterministicEnvironment):
     """
     Grid world Markov decision process (MDP) as described in Sutton & Barto, 2018.
     """
@@ -151,7 +159,7 @@ class GridWorld(EnvironmentBase):
         self.current_state = self.start_state
         return self.current_state, None
 
-    def get_state(self):
+    def get_current_state(self):
         return self.current_state, None
 
     def set_state(self, state):

@@ -4,9 +4,8 @@ from abc import abstractmethod, ABC
 from collections import defaultdict
 
 import numpy as np
-import numpy.random as nr
 
-from policy.policies import EpsilonGreedyPolicySampler
+from policy.epsilon_greedy_policy_sampler import EpsilonGreedyPolicySampler
 
 
 class TabularAlgBase(ABC):
@@ -117,7 +116,7 @@ class ModelFreeTabularPredictionAlgBase(TabularAlgBase):
         ----------
         env: EnvironmentBase
             The environment instance by interacting with which the RL agent learns.
-        policy_sampler: Policy
+        policy_sampler: ProbabilisticPolicy
             The random_policy for which the algorithm predicts the state-value functions.
         max_num_episodes: int
             The maximum number of episodes as a stopping criterion.
@@ -169,8 +168,8 @@ class ModelFreeTabularControlAlgBase(TabularAlgBase):
     should implement.
     """
 
-    #@staticmethod
-    #def default_action_selection_fcn(epsilon, action_value_dict, iter_num, episode_num):
+    # @staticmethod
+    # def default_action_selection_fcn(epsilon, action_value_dict, iter_num, episode_num):
     #    if nr.rand() < epsilon:
     #        return nr.choice(list(action_value_dict.keys()))
     #    else:
@@ -212,7 +211,7 @@ class ModelFreeTabularControlAlgBase(TabularAlgBase):
                     action_value_dict, fixed_epsilon
                 )
 
-            #self.action_selection_fcn = lambda action_value_dict, iter_num, episode_num:\
+            # self.action_selection_fcn = lambda action_value_dict, iter_num, episode_num:\
             #    ModelFreeTabularControlAlgBase.default_action_selection_fcn(
             #        fixed_epsilon, action_value_dict, iter_num, episode_num
             #    )

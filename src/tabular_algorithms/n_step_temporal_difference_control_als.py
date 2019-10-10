@@ -4,8 +4,10 @@ from copy import deepcopy
 
 import numpy as np
 
-from policy.policies import are_equivalent_greedy_policies
-from tabular_algorithms.tabular_rl_algorithms_base import ModelFreeTabularNStepControlAlgBase
+from policy.utils import are_equivalent_greedy_policies
+from tabular_algorithms.tabular_rl_algorithms_base import (
+    ModelFreeTabularNStepControlAlgBase,
+)
 
 
 class NStepSARSAAlg(ModelFreeTabularNStepControlAlgBase):
@@ -13,8 +15,17 @@ class NStepSARSAAlg(ModelFreeTabularNStepControlAlgBase):
     n-step SARSA, the on-policy n-step temporal difference (TD) control algorithm.
     """
 
-    def __init__(self, num_steps, gamma, learning_rate_fcn, behavior_policy, default_action_value_fcn_value):
-        super(NStepSARSAAlg, self).__init__(gamma, learning_rate_fcn, behavior_policy, default_action_value_fcn_value)
+    def __init__(
+        self,
+        num_steps,
+        gamma,
+        learning_rate_fcn,
+        behavior_policy,
+        default_action_value_fcn_value,
+    ):
+        super(NStepSARSAAlg, self).__init__(
+            gamma, learning_rate_fcn, behavior_policy, default_action_value_fcn_value
+        )
 
         self.num_steps = num_steps
         self.discount_factor_power_array = None
@@ -22,7 +33,9 @@ class NStepSARSAAlg(ModelFreeTabularNStepControlAlgBase):
         self.__initialize()
 
     def __initialize(self):
-        self.discount_factor_power_array = np.power(self.gamma, np.arange(self.num_steps + 1))
+        self.discount_factor_power_array = np.power(
+            self.gamma, np.arange(self.num_steps + 1)
+        )
 
     def learn(
         self,
@@ -33,7 +46,7 @@ class NStepSARSAAlg(ModelFreeTabularNStepControlAlgBase):
         max_num_episodes_with_same_greedy_policy,
         does_record_history=False,
         verbose_mode=False,
-        debug_mode=False
+        debug_mode=False,
     ):
 
         num_episodes_with_same_greedy_policy = 0
@@ -63,7 +76,7 @@ class NStepSARSAAlg(ModelFreeTabularNStepControlAlgBase):
 
             for t in range(max_num_transitions_per_episode):
                 if debug_mode:
-                    print(f't = {t}')
+                    print(f"t = {t}")
 
                 if not_terminated:
                     next_state, reward, is_terminal_state, _ = env.apply_action(action)
@@ -74,12 +87,16 @@ class NStepSARSAAlg(ModelFreeTabularNStepControlAlgBase):
                         not_terminated = False
                     else:
                         next_action_value_dict = self.action_value_fcn_dict[next_state]
-                        next_available_actions = env.get_all_available_actions(next_state)
+                        next_available_actions = env.get_all_available_actions(
+                            next_state
+                        )
                         if len(next_action_value_dict) < len(next_available_actions):
                             for next_action_ in next_available_actions:
                                 next_action_value_dict[next_action_]
 
-                        next_action = self.get_action(next_action_value_dict, iter_num, episode_num)
+                        next_action = self.get_action(
+                            next_action_value_dict, iter_num, episode_num
+                        )
 
                         state_list.append(next_state)
                         action_list.append(next_action)
@@ -92,12 +109,17 @@ class NStepSARSAAlg(ModelFreeTabularNStepControlAlgBase):
                         print(f"reward_list: {reward_list}")
 
                 if t >= self.num_steps - 1:
-                    n_reward_array = np.array(reward_list[t - self.num_steps + 1 : t + 1])
+                    n_reward_array = np.array(
+                        reward_list[t-self.num_steps+1:t+1]
+                    )
 
                     if n_reward_array.size == 0:
                         break
 
-                    G = (n_reward_array * self.discount_factor_power_array[: n_reward_array.size]).sum()
+                    G = (
+                        n_reward_array
+                        * self.discount_factor_power_array[: n_reward_array.size]
+                    ).sum()
 
                     tail_state_str = ""
                     if t + 1 < len(state_list):
@@ -106,30 +128,50 @@ class NStepSARSAAlg(ModelFreeTabularNStepControlAlgBase):
                         tail_action = action_list[tail_idx]
 
                         tail_action_value_dict = self.action_value_fcn_dict[tail_state]
-                        tail_action_value_fcn_value = tail_action_value_dict[tail_action]
+                        tail_action_value_fcn_value = tail_action_value_dict[
+                            tail_action
+                        ]
 
-                        G += self.discount_factor_power_array[-1] * tail_action_value_fcn_value
+                        G += (
+                            self.discount_factor_power_array[-1]
+                            * tail_action_value_fcn_value
+                        )
 
-                        tail_state_str = f", tail state/action: {str(tail_state)}/{tail_action}"
+                        tail_state_str = (
+                            f", tail state/action: {str(tail_state)}/{tail_action}"
+                        )
 
                     updated_idx = t - self.num_steps + 1
                     state_updated = state_list[updated_idx]
                     action_updated = action_list[updated_idx]
 
                     if debug_mode:
-                        print(f"\tupdated state/action: {state_updated}/{action_updated}, G: {G}{tail_state_str}")
+                        print(
+                            f"\tupdated state/action: {state_updated}/{action_updated}, G: {G}{tail_state_str}"
+                        )
 
-                    action_value_dict_updated = self.action_value_fcn_dict[state_updated]
-                    current_action_value_fcn_value = action_value_dict_updated[action_updated]
+                    action_value_dict_updated = self.action_value_fcn_dict[
+                        state_updated
+                    ]
+                    current_action_value_fcn_value = action_value_dict_updated[
+                        action_updated
+                    ]
 
                     learning_rate = self.get_learning_rate(iter_num, episode_num)
 
-                    action_value_dict_updated[action_updated] += learning_rate * (G - current_action_value_fcn_value)
+                    action_value_dict_updated[action_updated] += learning_rate * (
+                        G - current_action_value_fcn_value
+                    )
 
                     if debug_mode:
-                        print(f'\tprev. val: {current_action_value_fcn_value:.2f}', end=', ')
-                        print(f'G: {G}', end=', ')
-                        print(f'updated val: {action_value_dict_updated[action_updated]:.2f}')
+                        print(
+                            f"\tprev. val: {current_action_value_fcn_value:.2f}",
+                            end=", ",
+                        )
+                        print(f"G: {G}", end=", ")
+                        print(
+                            f"updated val: {action_value_dict_updated[action_updated]:.2f}"
+                        )
 
                     iter_num += 1
 
@@ -139,12 +181,17 @@ class NStepSARSAAlg(ModelFreeTabularNStepControlAlgBase):
             if iter_num > max_num_iters:
                 break
 
-            if are_equivalent_greedy_policies(previous_action_value_fcn_dict, self.action_value_fcn_dict):
+            if are_equivalent_greedy_policies(
+                previous_action_value_fcn_dict, self.action_value_fcn_dict
+            ):
                 num_episodes_with_same_greedy_policy += 1
             else:
                 num_episodes_with_same_greedy_policy = 0
 
-            if num_episodes_with_same_greedy_policy >= max_num_episodes_with_same_greedy_policy:
+            if (
+                num_episodes_with_same_greedy_policy
+                >= max_num_episodes_with_same_greedy_policy
+            ):
                 break
 
             previous_action_value_fcn_dict = deepcopy(self.action_value_fcn_dict)
@@ -155,8 +202,12 @@ class NStepQLearningAlg(ModelFreeTabularNStepControlAlgBase):
     Q-learning, the off-policy_sampler temporal difference (TD) control algorithm.
     """
 
-    def __init__(self, gamma, learning_rate_fcn, behavior_policy, default_action_value_fcn_value):
-        super(OneStepQLearningAlg, self).__init__(gamma, learning_rate_fcn, behavior_policy, default_action_value_fcn_value)
+    def __init__(
+        self, gamma, learning_rate_fcn, behavior_policy, default_action_value_fcn_value
+    ):
+        super(NStepQLearningAlg, self).__init__(
+            gamma, learning_rate_fcn, behavior_policy, default_action_value_fcn_value
+        )
 
     def learn(
         self,
@@ -164,8 +215,10 @@ class NStepQLearningAlg(ModelFreeTabularNStepControlAlgBase):
         max_num_episodes,
         max_num_iters,
         max_num_transitions_per_episode,
+        max_num_episodes_with_same_greedy_policy,
         does_record_history=False,
         verbose_mode=False,
+        debug_mode=False
     ):
 
         iter_num = 0
@@ -214,7 +267,9 @@ class NStepQLearningAlg(ModelFreeTabularNStepControlAlgBase):
 
                 learning_rate = self.get_learning_rate(iter_num, episode_num)
                 state_q_dict[action] += learning_rate * (
-                    reward + self.gamma * max_next_action_value_fcn_value - current_action_value_fcn_value
+                    reward
+                    + self.gamma * max_next_action_value_fcn_value
+                    - current_action_value_fcn_value
                 )
 
                 if verbose_mode:
@@ -247,10 +302,10 @@ class NStepQLearningAlg(ModelFreeTabularNStepControlAlgBase):
 
 if __name__ == "__main__":
 
-    from rl_utils.utils import print_action_value_fcn_dict, print_state_value_fcn_dict
+    from utils import print_action_value_fcn_dict, print_state_value_fcn_dict
     from environment.environments import GridWorld, GridWorldWithCliff
-    from policy.policies import Policy
-    from policy.policies import EpsilonGreedyPolicySampler
+    from policy.probabilistic_policy import ProbabilisticPolicy
+    from policy.epsilon_greedy_policy_sampler import EpsilonGreedyPolicySampler
 
     grid_width, grid_height = 10, 10
 
@@ -258,8 +313,8 @@ if __name__ == "__main__":
     test = "windy_grid"
     # test = "grid_world_cliff"
     reducing_learning_rate = False
-    alg = 'sarsa'
-    # alg = "qlearning"
+    # alg = "sarsa"
+    alg = "qlearning"
     deterministic_policy_for_prediction = False
 
     if test == "grid_world":
@@ -275,8 +330,10 @@ if __name__ == "__main__":
         assert False, test
 
     if reducing_learning_rate:
+
         def learning_rate_strategy(iter_num, episode_num):
             return 0.1 / (1.0 + episode_num * 0.1)
+
     else:
         learning_rate_strategy = 0.1
 
@@ -292,21 +349,29 @@ if __name__ == "__main__":
     does_record_history = True
     debug_mode = False
 
-
     if alg == "qlearning":
-        td_control_alg = OneStepQLearningAlg(gamma, learning_rate_strategy, epsilon, default_action_value_fcn_value)
+        td_control_alg = NStepQLearningAlg(
+            gamma, learning_rate_strategy, epsilon, default_action_value_fcn_value
+        )
     elif alg == "sarsa":
-        td_control_alg = NStepSARSAAlg(num_steps, gamma, learning_rate_strategy, epsilon, default_action_value_fcn_value)
+        td_control_alg = NStepSARSAAlg(
+            num_steps,
+            gamma,
+            learning_rate_strategy,
+            epsilon,
+            default_action_value_fcn_value,
+        )
     else:
         raise ValueError(alg)
 
     td_control_alg.learn(
-        env, max_num_epidoes,
+        env,
+        max_num_epidoes,
         max_num_iters,
         max_num_transitions_per_episode,
         max_num_episodes_with_same_greedy_policy,
         does_record_history=does_record_history,
-        debug_mode=debug_mode
+        debug_mode=debug_mode,
     )
 
     print_action_value_fcn_dict(td_control_alg.get_action_value_fcn_dict())
@@ -326,33 +391,42 @@ if __name__ == "__main__":
     fig = plt.figure(figsize=(12, 8))
     ax = fig.gca(projection="3d")
 
-    env.draw_3d_deterministic_action_value_fcn_values(ax, td_control_alg.get_action_value_fcn_dict())
+    env.draw_3d_deterministic_action_value_fcn_values(
+        ax, td_control_alg.get_action_value_fcn_dict()
+    )
     fig.show()
 
     fig, ax = plt.subplots()
-    env.draw_deterministic_actions_value_fcn_values(ax, td_control_alg.get_action_value_fcn_dict())
+    env.draw_deterministic_actions_value_fcn_values(
+        ax, td_control_alg.get_action_value_fcn_dict()
+    )
     fig.show()
-
 
     # value function prediction
 
     if deterministic_policy_for_prediction:
-        optimal_policy = Policy.get_deterministic_policy_from_action_value_fcn(
+        optimal_policy = ProbabilisticPolicy.get_deterministic_policy_from_action_value_fcn(
             td_control_alg.get_action_value_fcn_dict()
         )
     else:
-        optimal_policy = EpsilonGreedyPolicySampler(epsilon, td_control_alg.get_action_value_fcn_dict())
+        optimal_policy = EpsilonGreedyPolicySampler(
+            epsilon, td_control_alg.get_action_value_fcn_dict()
+        )
 
-    from tabular_algorithms.one_step_temporal_difference_alg import OneStepTemporalDifferenceAlg
+    from tabular_algorithms.one_step_temporal_difference_alg import (
+        OneStepTemporalDifferenceAlg,
+    )
 
-    td0 = OneStepTemporalDifferenceAlg(gamma, learning_rate_strategy, default_action_value_fcn_value)
+    td0 = OneStepTemporalDifferenceAlg(
+        gamma, learning_rate_strategy, default_action_value_fcn_value
+    )
     td0.predict(
         env,
         optimal_policy,
         max_num_epidoes,
         max_num_iters,
         max_num_transitions_per_episode,
-        does_record_history=does_record_history,
+        record_history=does_record_history,
     )
 
     if does_record_history:

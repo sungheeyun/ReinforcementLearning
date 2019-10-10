@@ -1,0 +1,82 @@
+{
+  "StartState": 0,
+  "GoalState": 3,
+  "StateTransitionGraph": [
+    {
+      "FromState": 0,
+      "StateTransition": [
+        {
+          "Action": 0,
+          "NextState": 1
+        },
+        {
+          "Action": 1,
+          "NextState": 4
+        }
+      ]
+    },
+    {
+      "FromState": 1,
+      "StateTransition": [
+        {
+          "Action": 0,
+          "NextState": 2
+        },
+        {
+          "Action": 1,
+          "NextState": 5
+        }
+      ]
+    },
+    {
+      "FromState": 2,
+      "StateTransition": [
+        {
+          "Action": 0,
+          "NextState": 3
+        },
+        {
+          "Action": 1,
+          "NextState": 6
+        }
+      ]
+    },
+    {
+      "FromState": 4,
+      "StateTransition": [
+        {
+          "Action": 0,
+          "NextState": 1
+        },
+        {
+          "Action": 1,
+          "NextState": 5
+        }
+      ]
+    },
+    {
+      "FromState": 5,
+      "StateTransition": [
+        {
+          "Action": 0,
+          "NextState": 2
+        },
+        {
+          "Action": 1,
+          "NextState": 6
+        }
+      ]
+    },
+    {
+      "FromState": 6,
+      "StateTransition": [
+        {
+          "Action": 0,
+          "NextState": 3
+        }
+      ]
+    }
+  ],
+  "StateTransitionReward": [],
+  "DefaultReward": -1
+}

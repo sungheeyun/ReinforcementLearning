@@ -2,8 +2,10 @@
 
 from copy import deepcopy
 
-from policy.policies import are_equivalent_greedy_policies
-from tabular_algorithms.tabular_rl_algorithms_base import ModelFreeTabularOneStepControlAlgBase
+from policy.utils import are_equivalent_greedy_policies
+from tabular_algorithms.tabular_rl_algorithms_base import (
+    ModelFreeTabularOneStepControlAlgBase,
+)
 
 
 class OneStepSARSAAlg(ModelFreeTabularOneStepControlAlgBase):
@@ -11,8 +13,12 @@ class OneStepSARSAAlg(ModelFreeTabularOneStepControlAlgBase):
     SARSA, the on-policy_sampler temporal difference (TD) control algorithm.
     """
 
-    def __init__(self, gamma, learning_rate_fcn, behavior_policy, default_action_value_fcn_value):
-        super(OneStepSARSAAlg, self).__init__(gamma, learning_rate_fcn, behavior_policy, default_action_value_fcn_value)
+    def __init__(
+        self, gamma, learning_rate_fcn, behavior_policy, default_action_value_fcn_value
+    ):
+        super(OneStepSARSAAlg, self).__init__(
+            gamma, learning_rate_fcn, behavior_policy, default_action_value_fcn_value
+        )
 
     def learn(
         self,
@@ -20,10 +26,10 @@ class OneStepSARSAAlg(ModelFreeTabularOneStepControlAlgBase):
         max_num_episodes,
         max_num_iters,
         max_num_transitions_per_episode,
-        max_num_episodes_with_same_greedy_policy=float('inf'),
+        max_num_episodes_with_same_greedy_policy=float("inf"),
         does_record_history=False,
         verbose_mode=False,
-        debug_mode=False
+        debug_mode=False,
     ):
 
         num_episodes_with_same_greedy_policy = 0
@@ -57,12 +63,16 @@ class OneStepSARSAAlg(ModelFreeTabularOneStepControlAlgBase):
                         for next_action_ in next_available_actions:
                             next_action_value_dict[next_action_]
 
-                    next_action = self.get_action(next_action_value_dict, iter_num, episode_num)
+                    next_action = self.get_action(
+                        next_action_value_dict, iter_num, episode_num
+                    )
                     next_action_value_fcn_value = next_action_value_dict[next_action]
 
                 learning_rate = self.get_learning_rate(iter_num, episode_num)
                 action_value_dict[action] += learning_rate * (
-                    reward + self.gamma * next_action_value_fcn_value - current_action_value_fcn_value
+                    reward
+                    + self.gamma * next_action_value_fcn_value
+                    - current_action_value_fcn_value
                 )
 
                 if is_terminal_state:
@@ -82,12 +92,17 @@ class OneStepSARSAAlg(ModelFreeTabularOneStepControlAlgBase):
             if iter_num > max_num_iters:
                 break
 
-            if are_equivalent_greedy_policies(previous_action_value_fcn_dict, self.action_value_fcn_dict):
+            if are_equivalent_greedy_policies(
+                previous_action_value_fcn_dict, self.action_value_fcn_dict
+            ):
                 num_episodes_with_same_greedy_policy += 1
             else:
                 num_episodes_with_same_greedy_policy = 0
 
-            if num_episodes_with_same_greedy_policy >= max_num_episodes_with_same_greedy_policy:
+            if (
+                num_episodes_with_same_greedy_policy
+                >= max_num_episodes_with_same_greedy_policy
+            ):
                 break
 
             previous_action_value_fcn_dict = deepcopy(self.action_value_fcn_dict)
@@ -98,8 +113,12 @@ class OneStepQLearningAlg(ModelFreeTabularOneStepControlAlgBase):
     Q-learning, the off-policy_sampler temporal difference (TD) control algorithm.
     """
 
-    def __init__(self, gamma, learning_rate_fcn, behavior_policy, default_action_value_fcn_value):
-        super(OneStepQLearningAlg, self).__init__(gamma, learning_rate_fcn, behavior_policy, default_action_value_fcn_value)
+    def __init__(
+        self, gamma, learning_rate_fcn, behavior_policy, default_action_value_fcn_value
+    ):
+        super(OneStepQLearningAlg, self).__init__(
+            gamma, learning_rate_fcn, behavior_policy, default_action_value_fcn_value
+        )
 
     def learn(
         self,
@@ -107,10 +126,10 @@ class OneStepQLearningAlg(ModelFreeTabularOneStepControlAlgBase):
         max_num_episodes,
         max_num_iters,
         max_num_transitions_per_episode,
-        max_num_episodes_with_same_greedy_policy=float('inf'),
+        max_num_episodes_with_same_greedy_policy=float("inf"),
         does_record_history=False,
         verbose_mode=False,
-        debug_mode=False
+        debug_mode=False,
     ):
 
         iter_num = 0
@@ -161,7 +180,9 @@ class OneStepQLearningAlg(ModelFreeTabularOneStepControlAlgBase):
 
                 learning_rate = self.get_learning_rate(iter_num, episode_num)
                 state_q_dict[action] += learning_rate * (
-                    reward + self.gamma * max_next_action_value_fcn_value - current_action_value_fcn_value
+                    reward
+                    + self.gamma * max_next_action_value_fcn_value
+                    - current_action_value_fcn_value
                 )
 
                 if verbose_mode:
@@ -194,9 +215,10 @@ class OneStepQLearningAlg(ModelFreeTabularOneStepControlAlgBase):
 
 if __name__ == "__main__":
 
-    from rl_utils.utils import print_action_value_fcn_dict, print_state_value_fcn_dict
+    from utils import print_action_value_fcn_dict, print_state_value_fcn_dict
     from environment.environments import GridWorld, GridWorldWithCliff
-    from policy.policies import Policy, EpsilonGreedyPolicySampler
+    from policy.probabilistic_policy import ProbabilisticPolicy
+    from policy.epsilon_greedy_policy_sampler import EpsilonGreedyPolicySampler
 
     grid_width, grid_height = 10, 10
 
@@ -204,7 +226,7 @@ if __name__ == "__main__":
     # test = "windy_grid"
     test = "grid_world_cliff"
     reducing_learning_rate = False
-    alg = 'sarsa'
+    alg = "sarsa"
     # alg = "qlearning"
     deterministic_policy_for_prediction = False
 
@@ -221,8 +243,10 @@ if __name__ == "__main__":
         assert False, test
 
     if reducing_learning_rate:
+
         def learning_rate_strategy(iter_num, episode_num):
             return 0.1 / (1.0 + episode_num * 0.0001)
+
     else:
         learning_rate_strategy = 0.1
 
@@ -236,9 +260,13 @@ if __name__ == "__main__":
     does_record_history = True
 
     if alg == "qlearning":
-        td_control_alg = OneStepQLearningAlg(gamma, learning_rate_strategy, epsilon, default_action_value_fcn_value)
+        td_control_alg = OneStepQLearningAlg(
+            gamma, learning_rate_strategy, epsilon, default_action_value_fcn_value
+        )
     elif alg == "sarsa":
-        td_control_alg = OneStepSARSAAlg(gamma, learning_rate_strategy, epsilon, default_action_value_fcn_value)
+        td_control_alg = OneStepSARSAAlg(
+            gamma, learning_rate_strategy, epsilon, default_action_value_fcn_value
+        )
     else:
         raise ValueError(alg)
 
@@ -248,7 +276,7 @@ if __name__ == "__main__":
         max_num_iters,
         max_num_transitions_per_episode,
         max_num_episodes_with_same_greedy_policy,
-        does_record_history=does_record_history
+        does_record_history=does_record_history,
     )
     print_action_value_fcn_dict(td_control_alg.get_action_value_fcn_dict())
 
@@ -267,30 +295,40 @@ if __name__ == "__main__":
     fig = plt.figure(figsize=(12, 8))
     ax = fig.gca(projection="3d")
 
-    env.draw_3d_deterministic_action_value_fcn_values(ax, td_control_alg.get_action_value_fcn_dict())
+    env.draw_3d_deterministic_action_value_fcn_values(
+        ax, td_control_alg.get_action_value_fcn_dict()
+    )
     fig.show()
 
     fig, ax = plt.subplots()
-    env.draw_deterministic_actions_value_fcn_values(ax, td_control_alg.get_action_value_fcn_dict())
+    env.draw_deterministic_actions_value_fcn_values(
+        ax, td_control_alg.get_action_value_fcn_dict()
+    )
     fig.show()
 
     if deterministic_policy_for_prediction:
-        optimal_policy = Policy.get_deterministic_policy_from_action_value_fcn(
+        optimal_policy = ProbabilisticPolicy.get_deterministic_policy_from_action_value_fcn(
             td_control_alg.get_action_value_fcn_dict()
         )
     else:
-        optimal_policy = EpsilonGreedyPolicySampler(epsilon, td_control_alg.get_action_value_fcn_dict())
+        optimal_policy = EpsilonGreedyPolicySampler(
+            epsilon, td_control_alg.get_action_value_fcn_dict()
+        )
 
-    from tabular_algorithms.one_step_temporal_difference_alg import OneStepTemporalDifferenceAlg
+    from tabular_algorithms.one_step_temporal_difference_alg import (
+        OneStepTemporalDifferenceAlg,
+    )
 
-    td0 = OneStepTemporalDifferenceAlg(gamma, learning_rate_strategy, default_action_value_fcn_value)
+    td0 = OneStepTemporalDifferenceAlg(
+        gamma, learning_rate_strategy, default_action_value_fcn_value
+    )
     td0.predict(
         env,
         optimal_policy,
         max_num_epidoes,
         max_num_iters,
         max_num_transitions_per_episode,
-        does_record_history=does_record_history,
+        record_history=does_record_history,
     )
 
     if does_record_history:

@@ -1,5 +1,4 @@
-""" Base class for environment for tabular reinforcement learning algorithms in this package """
-
+from typing import Tuple, Any, List
 from abc import ABC, abstractmethod
 
 
@@ -10,7 +9,7 @@ class EnvironmentBase(ABC):
         self.drawing_index = 0
 
     @abstractmethod
-    def reset(self):
+    def reset(self) -> Tuple[Any, Any]:
         """
         Bring the environment back to the initial state.
 
@@ -24,7 +23,7 @@ class EnvironmentBase(ABC):
         pass
 
     @abstractmethod
-    def get_state(self):
+    def get_current_state(self) -> Tuple[Any, Any]:
         """
         Returns the current state of the environment.
 
@@ -38,7 +37,7 @@ class EnvironmentBase(ABC):
         pass
 
     @abstractmethod
-    def set_state(self, state):
+    def set_state(self, state) -> None:
         """
         Forcefully set the state of the environment.
 
@@ -52,11 +51,10 @@ class EnvironmentBase(ABC):
         pass
 
     @abstractmethod
-    def apply_action(self, action):
+    def apply_action(self, action) -> Tuple[Any, Any, bool, Any]:
         """
         Applies an action to the environment and returns the next state, reward, whether or not it is at a terminal
         state (after applying the action), and extra information (if available).
-
 
         Parameters
         ----------
@@ -77,7 +75,7 @@ class EnvironmentBase(ABC):
         pass
 
     @abstractmethod
-    def get_all_available_actions(self, state):
+    def get_all_available_actions(self, state) -> List[Any]:
         """
         Returns available actions at the current state.
 
@@ -96,7 +94,7 @@ class EnvironmentBase(ABC):
         pass
 
     @abstractmethod
-    def is_terminal_state(self):
+    def is_terminal_state(self) -> bool:
         """
         Returns true if the environment is in a terminal state, and false otherwise.
         """

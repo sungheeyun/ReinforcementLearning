@@ -1,0 +1,318 @@
+{
+    "DefaultReward": -1.0,
+    "GoalState": 10,
+    "StartState": 0,
+    "StateTransitionGraph": [
+        {
+            "FromState": 0,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 1
+                },
+                {
+                    "Action": 1,
+                    "NextState": 18
+                },
+                {
+                    "Action": 2,
+                    "NextState": 11
+                }
+            ]
+        },
+        {
+            "FromState": 1,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 2
+                },
+                {
+                    "Action": 1,
+                    "NextState": 11
+                },
+                {
+                    "Action": 2,
+                    "NextState": 12
+                }
+            ]
+        },
+        {
+            "FromState": 2,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 3
+                },
+                {
+                    "Action": 1,
+                    "NextState": 14
+                },
+                {
+                    "Action": 2,
+                    "NextState": 16
+                }
+            ]
+        },
+        {
+            "FromState": 3,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 4
+                },
+                {
+                    "Action": 1,
+                    "NextState": 18
+                },
+                {
+                    "Action": 2,
+                    "NextState": 14
+                }
+            ]
+        },
+        {
+            "FromState": 4,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 5
+                },
+                {
+                    "Action": 1,
+                    "NextState": 24
+                },
+                {
+                    "Action": 2,
+                    "NextState": 17
+                }
+            ]
+        },
+        {
+            "FromState": 5,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 6
+                },
+                {
+                    "Action": 1,
+                    "NextState": 26
+                }
+            ]
+        },
+        {
+            "FromState": 6,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 7
+                },
+                {
+                    "Action": 1,
+                    "NextState": 24
+                },
+                {
+                    "Action": 2,
+                    "NextState": 15
+                }
+            ]
+        },
+        {
+            "FromState": 7,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 8
+                },
+                {
+                    "Action": 1,
+                    "NextState": 12
+                },
+                {
+                    "Action": 2,
+                    "NextState": 22
+                }
+            ]
+        },
+        {
+            "FromState": 8,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 9
+                },
+                {
+                    "Action": 1,
+                    "NextState": 12
+                },
+                {
+                    "Action": 2,
+                    "NextState": 20
+                }
+            ]
+        },
+        {
+            "FromState": 9,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 10
+                },
+                {
+                    "Action": 1,
+                    "NextState": 26
+                },
+                {
+                    "Action": 2,
+                    "NextState": 17
+                }
+            ]
+        },
+        {
+            "FromState": 11,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 12
+                }
+            ]
+        },
+        {
+            "FromState": 12,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 13
+                }
+            ]
+        },
+        {
+            "FromState": 13,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 14
+                }
+            ]
+        },
+        {
+            "FromState": 14,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 15
+                }
+            ]
+        },
+        {
+            "FromState": 15,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 16
+                }
+            ]
+        },
+        {
+            "FromState": 16,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 17
+                }
+            ]
+        },
+        {
+            "FromState": 17,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 18
+                }
+            ]
+        },
+        {
+            "FromState": 18,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 19
+                }
+            ]
+        },
+        {
+            "FromState": 19,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 20
+                }
+            ]
+        },
+        {
+            "FromState": 20,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 21
+                }
+            ]
+        },
+        {
+            "FromState": 21,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 22
+                }
+            ]
+        },
+        {
+            "FromState": 22,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 23
+                }
+            ]
+        },
+        {
+            "FromState": 23,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 24
+                }
+            ]
+        },
+        {
+            "FromState": 24,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 25
+                }
+            ]
+        },
+        {
+            "FromState": 25,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 26
+                }
+            ]
+        },
+        {
+            "FromState": 26,
+            "StateTransition": [
+                {
+                    "Action": 0,
+                    "NextState": 10
+                }
+            ]
+        }
+    ],
+    "StateTransitionReward": []
+}

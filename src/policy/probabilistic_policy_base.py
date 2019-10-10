@@ -1,43 +1,13 @@
 """ Base class for policy and policy sampler for Markov decision process in this package """
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 import numpy as np
 
-
-class PolicySamplerBase(ABC):
-
-    @abstractmethod
-    def get_action(self, state):
-        """
-        Returns action sample from the state.
-
-        Parameters
-        ----------
-        state: object
-            The state at which an action is chosen to be taken.
-
-        Returns
-        -------
-        action: object
-            The action chosen to be taken.
-        """
-        pass
-
-    @abstractmethod
-    def get_all_states(self):
-        """
-        Returns all the states.
-
-        Returns
-        -------
-        alL_states:
-            1-dimensional of all the states
-        """
-        pass
+from policy.policy_sampler_base import PolicySamplerBase
 
 
-class PolicyBase(PolicySamplerBase):
+class ProbabilisticPolicyBase(PolicySamplerBase):
 
     @abstractmethod
     def get_state_action_probability_dict_dict(self):
