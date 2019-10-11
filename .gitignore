@@ -128,4 +128,4 @@ dmypy.json
 *.pkl
 *.ipynb
 
-coverage_resulits/
+coverage_results/
