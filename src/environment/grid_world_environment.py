@@ -381,7 +381,7 @@ class GridWorld(DeterministicEnvironment):
     def draw_3d_state_value_fcn_values(
             self,
             axis: Axes,
-            state_value_fcn_dict: Dict[Tuple[int, int], float]
+            state_value_fcn_dict: Dict[Tuple[int, int], float],
             *args,
             **kwargs
     ) -> None:

@@ -14,6 +14,7 @@ from tabular_algorithms.n_step_sarsa_algorithm import NStepSARSAAlgorithm
 
 
 logger: logging.Logger = logging.getLogger()
+Axes3D
 
 
 class TestTabularNStepControlAlgorithm(unittest.TestCase):

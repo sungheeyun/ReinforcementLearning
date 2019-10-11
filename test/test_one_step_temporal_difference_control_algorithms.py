@@ -13,6 +13,7 @@ from tabular_algorithms.one_step_sarsa_algorithm import OneStepSARSAAlgorithm
 
 
 logger: logging.Logger = logging.getLogger()
+Axes3D
 
 
 class TestOneStepTemporalDifferenceControlAlgorithms(unittest.TestCase):
