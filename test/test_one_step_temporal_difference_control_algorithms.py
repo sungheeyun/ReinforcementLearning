@@ -1,39 +1,31 @@
 import unittest
 import logging
 
-from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-from utils import state_value_fcn_dict_to_str, action_value_fcn_dict_to_pretty_str, set_logging_basic_config
+from utils import action_value_fcn_dict_to_pretty_str, state_value_fcn_dict_to_str
 from environment.grid_world_environment import GridWorld, GridWorldWithCliff
 from policy.probabilistic_policy import ProbabilisticPolicy
 from policy.epsilon_greedy_policy_sampler import EpsilonGreedyPolicySampler
-from tabular_algorithms.n_step_q_learning_algorithm import NStepQLearningAlgorithm
-from tabular_algorithms.n_step_sarsa_algorithm import NStepSARSAAlgorithm
+from tabular_algorithms.one_step_q_learning_algorithm import OneStepQLearningAlgorithm
+from tabular_algorithms.one_step_sarsa_algorithm import OneStepSARSAAlgorithm
 
 
 logger: logging.Logger = logging.getLogger()
 
 
-class TestTabularNStepControlAlgorithm(unittest.TestCase):
+class TestOneStepTemporalDifferenceControlAlgorithms(unittest.TestCase):
+    def test_one_step_sarsa_algorithm(self):
 
-    record_history: bool = True
-    debug_mode: bool = False
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        set_logging_basic_config(__file__)
-
-    def test_n_step_q_learning_algorithm(self):
         grid_width, grid_height = 10, 10
 
         # test = 'grid_world'
-        test = "windy_grid"
-        # test = "grid_world_cliff"
+        # test = "windy_grid"
+        test = "grid_world_cliff"
         reducing_learning_rate = False
-        # alg = "sarsa"
-        alg = "qlearning"
-        deterministic_policy_for_prediction = True
+        alg = "sarsa"
+        # alg = "qlearning"
+        deterministic_policy_for_prediction = False
 
         if test == "grid_world":
             # env = GridWorld(grid_width, grid_height, 0.0, -1.0, -10.0)
@@ -50,32 +42,27 @@ class TestTabularNStepControlAlgorithm(unittest.TestCase):
         if reducing_learning_rate:
 
             def learning_rate_strategy(iter_num, episode_num):
-                return 0.1 / (1.0 + episode_num * 0.1)
+                return 0.1 / (1.0 + episode_num * 0.0001)
 
         else:
             learning_rate_strategy = 0.1
 
-        num_steps = 24
-        # max_num_epidoes = 1000
-        max_num_epidoes = 100
+        max_num_epidoes = 1000
         max_num_transitions_per_episode = 100
         max_num_iters = max_num_epidoes * max_num_transitions_per_episode
-        max_num_episodes_with_same_greedy_policy = 20
+        max_num_episodes_with_same_greedy_policy = 10
         gamma = 1.0
         default_action_value_fcn_value = 0.0
         epsilon = 0.5
+        does_record_history = True
 
         if alg == "qlearning":
-            td_control_alg = NStepQLearningAlgorithm(
+            td_control_alg = OneStepQLearningAlgorithm(
                 gamma, learning_rate_strategy, epsilon, default_action_value_fcn_value
             )
         elif alg == "sarsa":
-            td_control_alg = NStepSARSAAlgorithm(
-                num_steps,
-                gamma,
-                learning_rate_strategy,
-                epsilon,
-                default_action_value_fcn_value,
+            td_control_alg = OneStepSARSAAlgorithm(
+                gamma, learning_rate_strategy, epsilon, default_action_value_fcn_value
             )
         else:
             raise ValueError(alg)
@@ -86,15 +73,14 @@ class TestTabularNStepControlAlgorithm(unittest.TestCase):
             max_num_iters,
             max_num_transitions_per_episode,
             max_num_episodes_with_same_greedy_policy,
-            record_history=TestTabularNStepControlAlgorithm.record_history,
-            debug_mode=TestTabularNStepControlAlgorithm.debug_mode
+            does_record_history=does_record_history,
         )
 
-        logger.debug(action_value_fcn_dict_to_pretty_str(td_control_alg.get_action_value_fcn_dict()))
+        logger.info(action_value_fcn_dict_to_pretty_str(td_control_alg.get_action_value_fcn_dict()))
 
         from matplotlib import pyplot as plt
 
-        if TestTabularNStepControlAlgorithm.record_history:
+        if does_record_history:
             fig, ax = plt.subplots()
             td_control_alg.plot_value_fcn_history(ax)
             fig.show()
@@ -116,8 +102,6 @@ class TestTabularNStepControlAlgorithm(unittest.TestCase):
             ax, td_control_alg.get_action_value_fcn_dict()
         )
         fig.show()
-
-        # value function prediction
 
         if deterministic_policy_for_prediction:
             optimal_policy = ProbabilisticPolicy.get_deterministic_policy_from_action_value_fcn(
@@ -141,15 +125,15 @@ class TestTabularNStepControlAlgorithm(unittest.TestCase):
             max_num_epidoes,
             max_num_iters,
             max_num_transitions_per_episode,
-            record_history=TestTabularNStepControlAlgorithm.record_history,
+            record_history=does_record_history,
         )
 
-        if TestTabularNStepControlAlgorithm.record_history:
+        if does_record_history:
             fig, ax = plt.subplots()
             td0.plot_value_fcn_history(ax)
             fig.show()
 
-        logger.debug(state_value_fcn_dict_to_str(td0.get_state_value_fcn_dict()))
+        logger.info(state_value_fcn_dict_to_str(td0.get_state_value_fcn_dict()))
 
         fig = plt.figure(figsize=(12, 8))
         ax = fig.gca(projection="3d")
@@ -161,9 +145,11 @@ class TestTabularNStepControlAlgorithm(unittest.TestCase):
         env.draw_state_value_fcn_values(ax, td0.get_state_value_fcn_dict())
         fig.show()
 
+        logger.info(state_value_fcn_dict_to_str(td0.get_state_value_fcn_dict()))
+
+        if "__file__" in dir():
+            plt.show()
+
 
 if __name__ == '__main__':
     unittest.main()
-
-    if "__file__" in dir():
-        plt.show()

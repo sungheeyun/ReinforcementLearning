@@ -8,10 +8,16 @@ import networkx as nx
 logger = logging.getLogger()
 
 
-class AppNavGraph:
+class AppNavigationGraph:
 
-    def __init__(self, app_nav_graph: nx.DiGraph, start_node: int, goal_node: int, pos: Dict[int, Tuple[float, float]]):
-        self.app_nav_graph: nx.DiGraph = app_nav_graph
+    def __init__(
+            self,
+            directed_graph: nx.DiGraph,
+            start_node: int,
+            goal_node: int,
+            pos: Dict[int, Tuple[float, float]]
+    ):
+        self.directed_graph: nx.DiGraph = directed_graph
         self.start_node: int = start_node
         self.goal_node: int = goal_node
         self.pos: Dict[int, Tuple[float, float]] = pos
@@ -23,7 +29,7 @@ def get_x_coor(index: int, total_num: int, margin: float = 0.0) -> float:
 
 def generate_app_navigation_graph(
         shortest_path_length: int
-) -> AppNavGraph:
+) -> AppNavigationGraph:
 
     app_nav_graph: nx.DiGraph = nx.DiGraph()
 
@@ -67,12 +73,12 @@ def generate_app_navigation_graph(
 
     app_nav_graph.add_edge(second_layer_node_list[-1], first_layer_node_list[-1])
 
-    return AppNavGraph(app_nav_graph, start_node, goal_node, pos)
+    return AppNavigationGraph(app_nav_graph, start_node, goal_node, pos)
 
 
-def generate_multi_layer_app_nav_graph(
+def generate_multi_layer_app_navigation_graph(
         shortest_path_length: int, num_layers: int, layer_size_reduction_rate: float = 0.9
-) -> AppNavGraph:
+) -> AppNavigationGraph:
 
     di_graph: nx.DiGraph = nx.DiGraph()
 
@@ -128,12 +134,12 @@ def generate_multi_layer_app_nav_graph(
             to_node: int = int(np.random.choice(lower_layer_node_list))
             di_graph.add_edge(from_node, to_node)
 
-    return AppNavGraph(di_graph, start_node, goal_node, pos)
+    return AppNavigationGraph(di_graph, start_node, goal_node, pos)
 
 
-def app_nav_graph_to_json_obj(app_nav_graph: AppNavGraph) -> dict:
+def app_navigation_graph_to_json_obj(app_nav_graph: AppNavigationGraph) -> dict:
 
-    digraph: nx.DiGraph = app_nav_graph.app_nav_graph
+    digraph: nx.DiGraph = app_nav_graph.directed_graph
 
     json_obj: dict = dict()
 

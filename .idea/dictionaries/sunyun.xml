@@ -5,6 +5,7 @@
       <w>coor</w>
       <w>fout</w>
       <w>iters</w>
+      <w>sarsa</w>
     </words>
   </dictionary>
 </component>

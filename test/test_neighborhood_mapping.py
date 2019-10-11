@@ -16,7 +16,7 @@ from environment.deterministic_directed_graph_environment import (
     read_deterministic_directed_graph_environment_from_json,
 )
 from policy.epsilon_greedy_policy_sampler import EpsilonGreedyPolicySampler
-from tabular_algorithms.one_step_temporal_difference_alg import (
+from tabular_algorithms.one_step_temporal_difference_algorithm import (
     OneStepTemporalDifferenceAlgorithm,
 )
 from tabular_algorithms.one_step_q_learning_algorithm import OneStepQLearningAlgorithm

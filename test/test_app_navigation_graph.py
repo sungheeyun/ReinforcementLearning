@@ -8,11 +8,11 @@ from matplotlib.axes import Axes
 import networkx as nx
 
 from utils import get_pretty_json_str, set_logging_basic_config
-from graph.app_nav_graph_generation import (
-    AppNavGraph,
+from graph.app_navigation_graph_generation import (
+    AppNavigationGraph,
     generate_app_navigation_graph,
-    app_nav_graph_to_json_obj,
-    generate_multi_layer_app_nav_graph,
+    app_navigation_graph_to_json_obj,
+    generate_multi_layer_app_navigation_graph,
 )
 
 logger = logging.getLogger()
@@ -30,22 +30,22 @@ class TestAppNavGraph(unittest.TestCase):
 
         shortest_path_length = 10
 
-        app_nav_graph: AppNavGraph = generate_app_navigation_graph(shortest_path_length)
+        app_nav_graph: AppNavigationGraph = generate_app_navigation_graph(shortest_path_length)
 
         figure: Figure
         axis: Axes
 
         figure, axis = plt.subplots()
-        nx.draw(app_nav_graph.app_nav_graph, axis=axis, pos=app_nav_graph.pos)
+        nx.draw(app_nav_graph.directed_graph, axis=axis, pos=app_nav_graph.pos)
         nx.draw_networkx_labels(
-            app_nav_graph.app_nav_graph, axis=axis, pos=app_nav_graph.pos
+            app_nav_graph.directed_graph, axis=axis, pos=app_nav_graph.pos
         )
 
         axis.axis([-0.1, 1.1, -0.1, 1.1])
 
         figure.show()
 
-        json_obj: dict = app_nav_graph_to_json_obj(app_nav_graph)
+        json_obj: dict = app_navigation_graph_to_json_obj(app_nav_graph)
 
         logger.debug("json_obj from graph")
         logger.debug(get_pretty_json_str(json_obj))
@@ -65,7 +65,7 @@ class TestAppNavGraph(unittest.TestCase):
         shortest_path_length = 10
         num_layers = 4
 
-        app_nav_graph: AppNavGraph = generate_multi_layer_app_nav_graph(
+        app_nav_graph: AppNavigationGraph = generate_multi_layer_app_navigation_graph(
             shortest_path_length, num_layers
         )
 
@@ -73,16 +73,16 @@ class TestAppNavGraph(unittest.TestCase):
         axis: Axes
 
         figure, axis = plt.subplots()
-        nx.draw(app_nav_graph.app_nav_graph, axis=axis, pos=app_nav_graph.pos)
+        nx.draw(app_nav_graph.directed_graph, axis=axis, pos=app_nav_graph.pos)
         nx.draw_networkx_labels(
-            app_nav_graph.app_nav_graph, axis=axis, pos=app_nav_graph.pos
+            app_nav_graph.directed_graph, axis=axis, pos=app_nav_graph.pos
         )
 
         axis.axis([-0.1, 1.1, -0.1, 3.1])
 
         figure.show()
 
-        json_obj: dict = app_nav_graph_to_json_obj(app_nav_graph)
+        json_obj: dict = app_navigation_graph_to_json_obj(app_nav_graph)
 
         logger.debug("json_obj from graph")
         logger.debug(get_pretty_json_str(json_obj))
