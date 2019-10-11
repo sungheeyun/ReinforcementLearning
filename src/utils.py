@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict
 import json
 from typing import Optional
 import logging
@@ -46,22 +46,30 @@ def get_pretty_json_str(json_obj: Any) -> str:
     return json.dumps(json_obj, indent=4, sort_keys=True, default=_default_numpy)
 
 
-def print_action_value_fcn_dict(action_value_fcn_dict):
+def print_action_value_fcn_dict(action_value_fcn_dict: Dict[Any, Dict[Any, float]]) -> None:
     # TODO change this function to return str instead of printing and make proper changes accordingly
-    str_state_action_value_dict = dict()
+    print(action_value_fcn_dict_to_pretty_str(action_value_fcn_dict))
+
+
+def action_value_fcn_dict_to_pretty_str(action_value_fcn_dict: Dict[Any, Dict[Any, float]]) -> str:
+    str_state_action_value_dict: Dict[str, Dict[str, float]] = dict()
 
     for state, action_value_dict in action_value_fcn_dict.items():
         str_state_action_value_dict[str(state)] = convert_keys_to_strs(action_value_dict)
 
-    print(get_pretty_json_str(str_state_action_value_dict))
+    return get_pretty_json_str(str_state_action_value_dict)
 
 
-def print_state_value_fcn_dict(state_value_fcn_dict):
+def print_state_value_fcn_dict(state_value_fcn_dict: Dict[Any, float]) -> None:
     # TODO change this function to return str instead of printing and make proper changes accordingly
-    print(get_pretty_json_str(convert_keys_to_strs(state_value_fcn_dict)))
+    print(state_value_fcn_dict_to_str(state_value_fcn_dict))
 
 
-def convert_keys_to_strs(dict_):
+def state_value_fcn_dict_to_str(state_value_fcn_dict: Dict[Any, float]) -> str:
+    return get_pretty_json_str(convert_keys_to_strs(state_value_fcn_dict))
+
+
+def convert_keys_to_strs(dict_: Dict[Any, float]) -> Dict[str, float]:
     str_key_dict = dict()
 
     for key, value in dict_.items():

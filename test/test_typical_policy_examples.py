@@ -3,7 +3,7 @@ import unittest
 from collections import defaultdict
 import logging
 
-from utils import set_logging_basic_config, get_pretty_json_str, print_action_value_fcn_dict
+from utils import set_logging_basic_config, get_pretty_json_str, action_value_fcn_dict_to_pretty_str
 from policy.probabilistic_policy import ProbabilisticPolicy
 from policy.epsilon_greedy_policy_sampler import EpsilonGreedyPolicySampler
 
@@ -23,14 +23,14 @@ class TestTypicalPolicyExamples(unittest.TestCase):
         action_value_fcn_dict[0] = dict(a=1, b=3)
         action_value_fcn_dict[1] = dict(a=3, b=1)
 
-        print_action_value_fcn_dict(action_value_fcn_dict)
+        logger.info(action_value_fcn_dict_to_pretty_str(action_value_fcn_dict))
 
         deterministic_policy = ProbabilisticPolicy.get_deterministic_policy_from_action_value_fcn(
             action_value_fcn_dict
         )
 
-        print_action_value_fcn_dict(
-            deterministic_policy.get_state_action_probability_dict_dict()
+        logger.info(
+            action_value_fcn_dict_to_pretty_str(deterministic_policy.get_state_action_probability_dict_dict())
         )
 
         self.assertEqual(deterministic_policy.get_action(0), "b")

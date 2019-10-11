@@ -1,8 +1,6 @@
 import numpy as np
 
-from tabular_algorithms.tabular_rl_algorithms_base import (
-    ModelFreeTabularPredictionAlgorithmBase,
-)
+from tabular_algorithms.model_free_tabular_prediction_algorithm_base import ModelFreeTabularPredictionAlgorithmBase
 
 
 class NStepTemporalDifferenceAlgorithm(ModelFreeTabularPredictionAlgorithmBase):
@@ -158,7 +156,7 @@ if __name__ == "__main__":
 
         return np.linalg.norm(err_array) / np.sqrt(err_array.size)
 
-    from environment.environments import RandomWalkEnvironment
+    from environment.random_walk_environment import RandomWalkEnvironment
     from policy.equally_probable_random_policy_sampler import EquallyProbableRandomPolicySampler
 
     gamma = 1.0

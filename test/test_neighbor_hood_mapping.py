@@ -19,10 +19,7 @@ from policy.epsilon_greedy_policy_sampler import EpsilonGreedyPolicySampler
 from tabular_algorithms.one_step_temporal_difference_alg import (
     OneStepTemporalDifferenceAlgorithm,
 )
-from tabular_algorithms.one_step_temporal_difference_control_als import (
-    OneStepQLearningAlg,
-)
-
+from tabular_algorithms.one_step_q_learning_algorithm import OneStepQLearningAlgorithm
 
 logger = logging.getLogger()
 
@@ -133,7 +130,7 @@ class TestNeighborhoodMapping(unittest.TestCase):
             list(one_step_temporal_difference_alg.state_value_fcn_dict.values()), float
         ).mean()
 
-        one_step_q_learning_alg: OneStepQLearningAlg = OneStepQLearningAlg(
+        one_step_q_learning_alg: OneStepQLearningAlgorithm = OneStepQLearningAlgorithm(
             gamma, learning_rate, 0.0, default_action_value_fcn_value
         )
 
@@ -235,7 +232,7 @@ class TestNeighborhoodMapping(unittest.TestCase):
             list(one_step_temporal_difference_alg.state_value_fcn_dict.values()), float
         ).mean()
 
-        one_step_q_learning_alg: OneStepQLearningAlg = OneStepQLearningAlg(
+        one_step_q_learning_alg: OneStepQLearningAlgorithm = OneStepQLearningAlgorithm(
             gamma, learning_rate, 0.0, default_action_value_fcn_value
         )
 

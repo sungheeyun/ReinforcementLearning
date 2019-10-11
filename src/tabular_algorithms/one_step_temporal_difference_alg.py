@@ -5,8 +5,7 @@ import logging
 
 from policy.policy_sampler_base import PolicySamplerBase
 from environment.environment_base import EnvironmentBase
-from tabular_algorithms.tabular_rl_algorithms_base import ModelFreeTabularPredictionAlgorithmBase
-
+from tabular_algorithms.model_free_tabular_prediction_algorithm_base import ModelFreeTabularPredictionAlgorithmBase
 
 logger = logging.getLogger()
 

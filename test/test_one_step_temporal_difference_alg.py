@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 
-from environment.environments import RandomWalkEnvironment
+from environment.random_walk_environment import RandomWalkEnvironment
 from policy.equally_probable_random_policy_sampler import EquallyProbableRandomPolicySampler
 from tabular_algorithms.one_step_temporal_difference_alg import OneStepTemporalDifferenceAlgorithm
 from utils import get_pretty_json_str, set_logging_basic_config

@@ -1,0 +1,5 @@
+from tabular_algorithms.model_free_tabular_control_algorithm_base import ModelFreeTabularControlAlgorithmBase
+
+
+class ModelFreeTabularOneStepControlAlgorithmBase(ModelFreeTabularControlAlgorithmBase):
+    pass
