@@ -1,11 +1,11 @@
 import numpy as np
 
 from tabular_algorithms.tabular_rl_algorithms_base import (
-    ModelFreeTabularPredictionAlgBase,
+    ModelFreeTabularPredictionAlgorithmBase,
 )
 
 
-class NStepTemporalDifferenceAlg(ModelFreeTabularPredictionAlgBase):
+class NStepTemporalDifferenceAlgorithm(ModelFreeTabularPredictionAlgorithmBase):
     """
     Defines N-step temporal difference prediction algorithm.
     """
@@ -13,7 +13,7 @@ class NStepTemporalDifferenceAlg(ModelFreeTabularPredictionAlgBase):
     def __init__(
         self, num_steps, gamma, learning_rate_fcn, defaulit_state_value_fcn_value
     ):
-        super(NStepTemporalDifferenceAlg, self).__init__(
+        super(NStepTemporalDifferenceAlgorithm, self).__init__(
             gamma, learning_rate_fcn, defaulit_state_value_fcn_value
         )
 
@@ -200,7 +200,7 @@ if __name__ == "__main__":
             for alpha in alpha_array:
                 print(f"alpha: {alpha:.2f}: ", end="")
                 learning_rate_strategy = alpha
-                tdn = NStepTemporalDifferenceAlg(
+                tdn = NStepTemporalDifferenceAlgorithm(
                     num_steps,
                     gamma,
                     learning_rate_strategy,
@@ -281,7 +281,7 @@ if __name__ == "__main__":
         else:
             learning_rate_strategy = 0.2
 
-        tdn = NStepTemporalDifferenceAlg(num_steps, gamma, learning_rate_strategy, 0.5)
+        tdn = NStepTemporalDifferenceAlgorithm(num_steps, gamma, learning_rate_strategy, 0.5)
 
         from matplotlib import pyplot as plt
 

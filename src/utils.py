@@ -1,3 +1,4 @@
+from typing import Any
 import json
 from typing import Optional
 import logging
@@ -41,8 +42,8 @@ def set_logging_basic_config(
     )
 
 
-def get_pretty_json_str(json_dict):
-    return json.dumps(json_dict, indent=4, sort_keys=True, default=_default_numpy)
+def get_pretty_json_str(json_obj: Any) -> str:
+    return json.dumps(json_obj, indent=4, sort_keys=True, default=_default_numpy)
 
 
 def print_action_value_fcn_dict(action_value_fcn_dict):

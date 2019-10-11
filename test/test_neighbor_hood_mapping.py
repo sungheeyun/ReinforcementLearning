@@ -16,31 +16,47 @@ from environment.deterministic_directed_graph_environment import (
     read_deterministic_directed_graph_environment_from_json,
 )
 from policy.epsilon_greedy_policy_sampler import EpsilonGreedyPolicySampler
-from tabular_algorithms.one_step_temporal_difference_alg import OneStepTemporalDifferenceAlg
-from tabular_algorithms.one_step_temporal_difference_control_als import OneStepQLearningAlg
+from tabular_algorithms.one_step_temporal_difference_alg import (
+    OneStepTemporalDifferenceAlgorithm,
+)
+from tabular_algorithms.one_step_temporal_difference_control_als import (
+    OneStepQLearningAlg,
+)
 
 
 logger = logging.getLogger()
 
 
-class TestNeighborhoodMapping(unittest.TestCase):
-    test_data_directory = os.path.join(os.curdir, "data")
+def initialize_action_value_fcn_from_state_value_fcn(
+    action_value_fcn_dict: Dict[Any, Dict[Any, float]],
+    state_value_fcn_dict: Dict[Any, float],
+) -> None:
+    state: Any
+    state_value: float
+    for state, state_value in state_value_fcn_dict.items():
+        action_value_fcn_dict[state][0] = state_value
 
-    simple_deterministic_state_transition_graph_json_file_path = os.path.join(
+
+class TestNeighborhoodMapping(unittest.TestCase):
+    test_data_directory: str = os.path.join(os.curdir, "data")
+
+    simple_deterministic_state_transition_graph_json_file_path: str = os.path.join(
         test_data_directory, "simple_deterministic_state_transition_graph.json"
     )
 
-    simple_action_sequence_json_file_path = os.path.join(
+    simple_action_sequence_json_file_path: str = os.path.join(
         test_data_directory, "simple_action_sequence.json"
     )
 
-    large_deterministic_state_transition_graph_json_file_path = os.path.join(
+    large_deterministic_state_transition_graph_json_file_path: str = os.path.join(
         test_data_directory, "larger_deterministic_state_transition_graph.json"
     )
 
-    large_action_sequence_json_file_path = os.path.join(
+    large_action_sequence_json_file_path: str = os.path.join(
         test_data_directory, "large_action_sequence.json"
     )
+
+    do_initialize: bool = True
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -54,7 +70,9 @@ class TestNeighborhoodMapping(unittest.TestCase):
             )
         )
 
-        logger.debug(f"environment start state: {deterministic_directed_graph_environment.start_state}")
+        logger.debug(
+            f"environment start state: {deterministic_directed_graph_environment.start_state}"
+        )
 
         with open(TestNeighborhoodMapping.simple_action_sequence_json_file_path) as fin:
             action_sequence_json_obj: dict = json.load(fin)
@@ -85,7 +103,7 @@ class TestNeighborhoodMapping(unittest.TestCase):
             epsilon, action_value_fcn_dict_from_action_sequence
         )
 
-        one_step_temporal_difference_alg: OneStepTemporalDifferenceAlg = OneStepTemporalDifferenceAlg(
+        one_step_temporal_difference_alg: OneStepTemporalDifferenceAlgorithm = OneStepTemporalDifferenceAlgorithm(
             gamma, learning_rate, default_state_value_fcn_value
         )
 
@@ -97,7 +115,7 @@ class TestNeighborhoodMapping(unittest.TestCase):
             100,
             True,
             True,
-            True
+            True,
         )
 
         figure: Figure
@@ -107,18 +125,23 @@ class TestNeighborhoodMapping(unittest.TestCase):
         one_step_temporal_difference_alg.plot_value_fcn_history(axis)
         figure.show()
 
-        logger.info(get_pretty_json_str(one_step_temporal_difference_alg.state_value_fcn_dict))
+        logger.info(
+            get_pretty_json_str(one_step_temporal_difference_alg.state_value_fcn_dict)
+        )
 
         default_action_value_fcn_value: float = np.array(
             list(one_step_temporal_difference_alg.state_value_fcn_dict.values()), float
         ).mean()
 
         one_step_q_learning_alg: OneStepQLearningAlg = OneStepQLearningAlg(
-            gamma,
-            learning_rate,
-            0.0,
-            default_action_value_fcn_value
+            gamma, learning_rate, 0.0, default_action_value_fcn_value
         )
+
+        if TestNeighborhoodMapping.do_initialize:
+            initialize_action_value_fcn_from_state_value_fcn(
+                one_step_q_learning_alg.action_value_fcn_dict,
+                one_step_temporal_difference_alg.state_value_fcn_dict,
+            )
 
         one_step_q_learning_alg.learn(
             deterministic_directed_graph_environment,
@@ -128,7 +151,7 @@ class TestNeighborhoodMapping(unittest.TestCase):
             10,
             True,
             False,
-            False
+            False,
         )
 
         figure, axis = plt.subplots()
@@ -147,7 +170,9 @@ class TestNeighborhoodMapping(unittest.TestCase):
             )
         )
 
-        logger.debug(f"environment start state: {deterministic_directed_graph_environment.start_state}")
+        logger.debug(
+            f"environment start state: {deterministic_directed_graph_environment.start_state}"
+        )
 
         with open(TestNeighborhoodMapping.large_action_sequence_json_file_path) as fin:
             action_sequence_json_obj: dict = json.load(fin)
@@ -180,7 +205,7 @@ class TestNeighborhoodMapping(unittest.TestCase):
             epsilon, action_value_fcn_dict_from_action_sequence
         )
 
-        one_step_temporal_difference_alg: OneStepTemporalDifferenceAlg = OneStepTemporalDifferenceAlg(
+        one_step_temporal_difference_alg: OneStepTemporalDifferenceAlgorithm = OneStepTemporalDifferenceAlgorithm(
             gamma, learning_rate, default_state_value_fcn_value
         )
 
@@ -192,7 +217,7 @@ class TestNeighborhoodMapping(unittest.TestCase):
             100,
             True,
             True,
-            True
+            True,
         )
 
         figure: Figure
@@ -202,18 +227,23 @@ class TestNeighborhoodMapping(unittest.TestCase):
         one_step_temporal_difference_alg.plot_value_fcn_history(axis)
         figure.show()
 
-        logger.info(get_pretty_json_str(one_step_temporal_difference_alg.state_value_fcn_dict))
+        logger.info(
+            get_pretty_json_str(one_step_temporal_difference_alg.state_value_fcn_dict)
+        )
 
         default_action_value_fcn_value: float = np.array(
             list(one_step_temporal_difference_alg.state_value_fcn_dict.values()), float
         ).mean()
 
         one_step_q_learning_alg: OneStepQLearningAlg = OneStepQLearningAlg(
-            gamma,
-            learning_rate,
-            0.0,
-            default_action_value_fcn_value
+            gamma, learning_rate, 0.0, default_action_value_fcn_value
         )
+
+        if TestNeighborhoodMapping.do_initialize:
+            initialize_action_value_fcn_from_state_value_fcn(
+                one_step_q_learning_alg.action_value_fcn_dict,
+                one_step_temporal_difference_alg.state_value_fcn_dict,
+            )
 
         one_step_q_learning_alg.learn(
             deterministic_directed_graph_environment,
@@ -223,7 +253,7 @@ class TestNeighborhoodMapping(unittest.TestCase):
             10,
             True,
             False,
-            False
+            False,
         )
 
         figure, axis = plt.subplots()

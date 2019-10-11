@@ -1,5 +1,7 @@
-from typing import Tuple, Any, List
+from typing import Tuple, Any, Iterable, Dict
 from abc import ABC, abstractmethod
+
+from matplotlib.axes import Axes
 
 
 class EnvironmentBase(ABC):
@@ -37,7 +39,7 @@ class EnvironmentBase(ABC):
         pass
 
     @abstractmethod
-    def set_state(self, state) -> None:
+    def set_state(self, state: Any) -> None:
         """
         Forcefully set the state of the environment.
 
@@ -45,13 +47,11 @@ class EnvironmentBase(ABC):
         ----------
         state :
             The state the environment is set to.
-        info:
-            Extra information about environment, e.g., information regarding inner state, etc.
         """
         pass
 
     @abstractmethod
-    def apply_action(self, action) -> Tuple[Any, Any, bool, Any]:
+    def apply_action(self, action: Any) -> Tuple[Any, float, bool, Any]:
         """
         Applies an action to the environment and returns the next state, reward, whether or not it is at a terminal
         state (after applying the action), and extra information (if available).
@@ -75,7 +75,7 @@ class EnvironmentBase(ABC):
         pass
 
     @abstractmethod
-    def get_all_available_actions(self, state) -> List[Any]:
+    def get_all_available_actions(self, state: Any) -> Iterable[Any]:
         """
         Returns available actions at the current state.
 
@@ -88,8 +88,8 @@ class EnvironmentBase(ABC):
 
         Returns
         -------
-        action_list :
-            List of available actions at the current state.
+        action_iterable :
+            Iterable of available actions at the current state.
         """
         pass
 
@@ -100,43 +100,55 @@ class EnvironmentBase(ABC):
         """
         pass
 
-    def draw_state_value_fcn_values(self, ax, state_value_fcn_dict, *pargs, **kargs):
+    def draw_state_value_fcn_values(
+        self, ax: Axes, state_value_fcn_dict: Dict[Any, float], *args, **kwargs
+    ):
         """
         Draws the values of the state value functions.
         """
         pass
 
-    def draw_actions_value_fcn_values(self, ax, actions_value_fcn_dict, *pargs, **kargs):
+    def draw_actions_value_fcn_values(
+        self,
+        ax: Axes,
+        actions_value_fcn_dict: Dict[Any, Dict[Any, float]],
+        *args,
+        **kwargs
+    ):
         """
         Draws the values of the action value functions.
         """
         pass
 
-    def draw_deterministic_actions_value_fcn_values(self, ax, actions_value_fcn_dict, *pargs, **kargs):
+    def draw_deterministic_actions_value_fcn_values(
+        self, ax, actions_value_fcn_dict, *args, **kwargs
+    ):
         """
         Draws the values of the action value functions.
         """
         pass
 
-    def draw_deterministic_actions(self, ax, actions_value_fcn_dict, *pargs, **kargs):
+    def draw_deterministic_actions(self, ax, actions_value_fcn_dict, *args, **kwargs):
         """
         Draws best actions.
         """
         pass
 
-    def draw_boltzmann_actions(self, ax, actions_value_fcn_dict, *pargs, **kargs):
+    def draw_boltzmann_actions(self, ax, actions_value_fcn_dict, *args, **kwargs):
         """
         Draws all actions based on Boltzmann distribution.
         """
         pass
 
-    def draw_3d_state_value_fcn_values(self, ax, state_value_fcn_dict, *pargs, **kargs):
+    def draw_3d_state_value_fcn_values(self, ax, state_value_fcn_dict, *args, **kwargs):
         """
         Draws the values of the state value functions.
         """
         pass
 
-    def draw_3d_deterministic_action_value_fcn_values(self, ax, actions_value_fcn_dict, *pargs, **kargs):
+    def draw_3d_deterministic_action_value_fcn_values(
+        self, ax, actions_value_fcn_dict, *args, **kwargs
+    ):
         """
         Draws the values of the action value functions.
         """

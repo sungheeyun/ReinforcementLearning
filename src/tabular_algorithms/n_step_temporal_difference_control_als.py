@@ -414,10 +414,10 @@ if __name__ == "__main__":
         )
 
     from tabular_algorithms.one_step_temporal_difference_alg import (
-        OneStepTemporalDifferenceAlg,
+        OneStepTemporalDifferenceAlgorithm,
     )
 
-    td0 = OneStepTemporalDifferenceAlg(
+    td0 = OneStepTemporalDifferenceAlgorithm(
         gamma, learning_rate_strategy, default_action_value_fcn_value
     )
     td0.predict(

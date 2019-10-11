@@ -1,10 +1,11 @@
-from typing import Union
+from typing import Union, Any, Tuple, Dict
 from collections import defaultdict
 
 import numpy as np
 from scipy import interpolate
 from matplotlib import pyplot as plt
 from matplotlib import cm
+from matplotlib.axes import Axes
 
 from environment.deterministic_environment import DeterministicEnvironment
 
@@ -14,13 +15,13 @@ class RandomWalkEnvironment(DeterministicEnvironment):
     Random work Markov reward process (MRP) as described in Example 6.2 of Sutton & Barto, 2018.
     """
 
-    all_action_tuple = ("left", "right")
+    all_action_tuple: Tuple[str] = ("left", "right")
 
     def __init__(
-            self,
-            num_nodes: int,
-            leftmost_reward: Union[float, int] = 0.0,
-            rightmost_reward: Union[float, int] = 1.0
+        self,
+        num_nodes: int,
+        leftmost_reward: Union[float, int] = 0.0,
+        rightmost_reward: Union[float, int] = 1.0,
     ):
         super(RandomWalkEnvironment, self).__init__()
         self.num_nodes: int = num_nodes
@@ -29,24 +30,26 @@ class RandomWalkEnvironment(DeterministicEnvironment):
 
         self.current_state: int = None
 
-    def reset(self):
+    def reset(self) -> Tuple[int, Any]:
         self.current_state = int((self.num_nodes + 1) / 2)
         return self.current_state, None
 
-    def get_current_state(self):
+    def get_current_state(self) -> Tuple[int, Any]:
         return self.current_state, None
 
-    def set_state(self, state):
+    def set_state(self, state: int) -> None:
         self.current_state = state, None
 
-    def apply_action(self, action):
+    def apply_action(self, action: str) -> Tuple[int, float, bool, Any]:
 
         if action == "left":
             self.current_state -= 1
         elif action == "right":
             self.current_state += 1
         else:
-            raise ValueError(f"action should be either 'left' or 'right'; action: {action}")
+            raise ValueError(
+                f"action should be either 'left' or 'right'; action: {action}"
+            )
 
         if self.current_state == self.num_nodes + 1:
             reward = self.rightmost_reward
@@ -57,22 +60,24 @@ class RandomWalkEnvironment(DeterministicEnvironment):
 
         return self.current_state, reward, self.is_terminal_state(), None
 
-    def get_all_available_actions(self, state):
+    def get_all_available_actions(self, state: int) -> Tuple[str]:
         return RandomWalkEnvironment.all_action_tuple
 
-    def is_terminal_state(self):
+    def is_terminal_state(self) -> bool:
         return self.current_state == 0 or self.current_state == self.num_nodes + 1
 
-    def get_num_nodes(self):
+    def get_num_nodes(self) -> int:
         return self.num_nodes
 
-    def get_leftmost_reward(self):
+    def get_leftmost_reward(self) -> float:
         return self.leftmost_reward
 
-    def get_rightmost_reward(self):
+    def get_rightmost_reward(self) -> float:
         return self.rightmost_reward
 
-    def draw_state_value_fcn_values(self, ax, state_value_fcn_dict, *pargs, **kargs):
+    def draw_state_value_fcn_values(
+        self, ax: Axes, state_value_fcn_dict: Dict[Any, float], *args, **kwargs
+    ) -> None:
         state_list = list(state_value_fcn_dict.keys())
         state_list.sort()
 
@@ -80,9 +85,16 @@ class RandomWalkEnvironment(DeterministicEnvironment):
 
         x_array = np.r_[0, state_list, self.num_nodes + 1]
         y_array = np.r_[self.leftmost_reward, value_list, self.rightmost_reward]
-        ax.plot(x_array, y_array, *pargs, **kargs)
 
-    def draw_actions_value_fcn_values(self, ax, actions_value_fcn_dict, *pargs, **kargs):
+        ax.plot(x_array, y_array, *args, **kwargs)
+
+    def draw_actions_value_fcn_values(
+        self,
+        ax: Axes,
+        actions_value_fcn_dict: Dict[Any, Dict[Any, float]],
+        *args,
+        **kwargs,
+    ) -> None:
         state_list = list(actions_value_fcn_dict.keys())
         state_list.sort()
 
@@ -93,12 +105,14 @@ class RandomWalkEnvironment(DeterministicEnvironment):
                 action_values_dict[action][idx] = value
 
         self.drawing_index += 1
-        drawing_label = kargs.pop("label", f"{self.drawing_index}")
+        drawing_label = kwargs.pop("label", f"{self.drawing_index}")
 
         x_array = np.r_[0, state_list, self.num_nodes + 1]
         for action, value_array in action_values_dict.items():
             y_array = np.r_[self.leftmost_reward, value_array, self.rightmost_reward]
-            ax.plot(x_array, y_array, label=f"{drawing_label}_{action}", *pargs, **kargs)
+            ax.plot(
+                x_array, y_array, label=f"{drawing_label}_{action}", *args, **kwargs
+            )
 
 
 class GridWorld(DeterministicEnvironment):
@@ -186,7 +200,9 @@ class GridWorld(DeterministicEnvironment):
         elif action == "up":
             y += 1
         else:
-            raise ValueError(f"'action' should be either 'left', 'right', 'up', or 'down'; {action} given")
+            raise ValueError(
+                f"'action' should be either 'left', 'right', 'up', or 'down'; {action} given"
+            )
 
         if x < 0:
             x = 0
@@ -219,29 +235,51 @@ class GridWorld(DeterministicEnvironment):
 
     def _draw_grid_world(self, ax):
 
-        draw_kargs = dict(linestyle="-", color="k", alpha=0.5)
+        draw_kwargs = dict(linestyle="-", color="k", alpha=0.5)
 
         for col in range(self.width):
-            ax.plot((col - 0.5) * np.ones(2), [-0.5, self.height - 0.5], **draw_kargs)
-        ax.plot((self.width - 0.5) * np.ones(2), [-0.5, self.height - 0.5], **draw_kargs)
+            ax.plot((col - 0.5) * np.ones(2), [-0.5, self.height - 0.5], **draw_kwargs)
+        ax.plot(
+            (self.width - 0.5) * np.ones(2), [-0.5, self.height - 0.5], **draw_kwargs
+        )
 
         for row in range(self.height):
-            ax.plot([-0.5, self.width - 0.5], (row - 0.5) * np.ones(2), **draw_kargs)
-        ax.plot([-0.5, self.width - 0.5], (self.height - 0.5) * np.ones(2), **draw_kargs)
+            ax.plot([-0.5, self.width - 0.5], (row - 0.5) * np.ones(2), **draw_kwargs)
+        ax.plot(
+            [-0.5, self.width - 0.5], (self.height - 0.5) * np.ones(2), **draw_kwargs
+        )
 
         ax.add_artist(
-            plt.Circle(self.get_start_state(), radius=GridWorld.ARROW_LENGTH * 0.5 * 1.1, color="b", fill=False)
+            plt.Circle(
+                self.get_start_state(),
+                radius=GridWorld.ARROW_LENGTH * 0.5 * 1.1,
+                color="b",
+                fill=False,
+            )
         )
 
         for terminal_state in self.get_terminal_states():
-            ax.add_artist(plt.Circle(terminal_state, radius=GridWorld.ARROW_LENGTH * 0.5 * 1.1, color="k", fill=True))
+            ax.add_artist(
+                plt.Circle(
+                    terminal_state,
+                    radius=GridWorld.ARROW_LENGTH * 0.5 * 1.1,
+                    color="k",
+                    fill=True,
+                )
+            )
 
         xlim = [-1.0, self.width]
         ylim = [-1.0, self.height]
 
         if self.upward_wind_list:
             for col in range(self.width):
-                ax.text(col, -1.0, f"{self.upward_wind_list[col]:.1f}", ha="center", va="top")
+                ax.text(
+                    col,
+                    -1.0,
+                    f"{self.upward_wind_list[col]:.1f}",
+                    ha="center",
+                    va="top",
+                )
                 ylim[0] = -1.5
 
         if self.rightward_wind_list:
@@ -255,7 +293,7 @@ class GridWorld(DeterministicEnvironment):
         ax.axis("equal")
         ax.axis("off")
 
-    def draw_boltzmann_actions(self, ax, actions_value_fcn_dict, *pargs, **kargs):
+    def draw_boltzmann_actions(self, ax, actions_value_fcn_dict, *args, **kwargs):
         arrow_half_length = GridWorld.ARROW_LENGTH / 2.0
 
         for state, actions_value_dict in actions_value_fcn_dict.items():
@@ -266,10 +304,10 @@ class GridWorld(DeterministicEnvironment):
                 delx, dely = GridWorld.ACTION_DELTA_XY_DICT[action]
                 length = arrow_half_length * np.exp(value - max_value)
 
-                kargs_copied = kargs.copy()
+                kwargs_copied = kwargs.copy()
 
                 if action == max_action:
-                    kargs_copied.update(color="r")
+                    kwargs_copied.update(color="r")
 
                 ax.arrow(
                     x,
@@ -278,13 +316,13 @@ class GridWorld(DeterministicEnvironment):
                     length * dely,
                     head_width=0.3 * length,
                     length_includes_head=True,
-                    *pargs,
-                    **kargs_copied,
+                    *args,
+                    **kwargs_copied,
                 )
 
         self._draw_grid_world(ax)
 
-    def draw_deterministic_actions(self, ax, actions_value_fcn_dict, *pargs, **kargs):
+    def draw_deterministic_actions(self, ax, actions_value_fcn_dict, *args, **kwargs):
         arrow_length = GridWorld.ARROW_LENGTH
         arrow_half_length = arrow_length / 2.0
         for state, actions_value_dict in actions_value_fcn_dict.items():
@@ -298,13 +336,13 @@ class GridWorld(DeterministicEnvironment):
                 arrow_length * dely,
                 head_width=0.1 * arrow_length,
                 length_includes_head=True,
-                *pargs,
-                **kargs,
+                *args,
+                **kwargs,
             )
 
         self._draw_grid_world(ax)
 
-    def _draw_state_value_fcn_values(self, ax, state_value_fcn_dict, *pargs, **kargs):
+    def _draw_state_value_fcn_values(self, ax, state_value_fcn_dict, *args, **kwargs):
 
         for state, value in state_value_fcn_dict.items():
             x, y = state
@@ -312,22 +350,28 @@ class GridWorld(DeterministicEnvironment):
 
         self._draw_grid_world(ax)
 
-    def draw_state_value_fcn_values(self, ax, state_value_fcn_dict, *pargs, **kargs):
-        self._draw_state_value_fcn_values(ax, state_value_fcn_dict, *pargs, **kargs)
+    def draw_state_value_fcn_values(self, ax, state_value_fcn_dict, *args, **kwargs):
+        self._draw_state_value_fcn_values(ax, state_value_fcn_dict, *args, **kwargs)
 
         ax.set_title("State Value Functions")
 
-    def draw_deterministic_actions_value_fcn_values(self, ax, actions_value_fcn_dict, *pargs, **kargs):
+    def draw_deterministic_actions_value_fcn_values(
+        self, ax, actions_value_fcn_dict, *args, **kwargs
+    ):
 
         state_deterministic_action_value_dict = dict()
         for state, action_value_dict in actions_value_fcn_dict.items():
-            state_deterministic_action_value_dict[state] = max(action_value_dict.values())
+            state_deterministic_action_value_dict[state] = max(
+                action_value_dict.values()
+            )
 
-        self._draw_state_value_fcn_values(ax, state_deterministic_action_value_dict, *pargs, **kargs)
+        self._draw_state_value_fcn_values(
+            ax, state_deterministic_action_value_dict, *args, **kwargs
+        )
 
         ax.set_title("Deterministic Action Value Functions")
 
-    def _draw_3d_value_fcn_values(self, ax, X, Y, V, *pargs, **kargs):
+    def _draw_3d_value_fcn_values(self, ax, X, Y, V, *args, **kwargs):
 
         x_1d_array = X.ravel()
         y_1d_array = Y.ravel()
@@ -344,20 +388,41 @@ class GridWorld(DeterministicEnvironment):
         V_draw[inds] = non_nan_v_1d_array.min()
 
         interpolated_V = interpolate.griddata(
-            (non_nan_x_1d_array, non_nan_y_1d_array), non_nan_v_1d_array, (X, Y), method="nearest"
+            (non_nan_x_1d_array, non_nan_y_1d_array),
+            non_nan_v_1d_array,
+            (X, Y),
+            method="nearest",
         )
 
         V_draw[inds] = interpolated_V[inds]
 
-        ax.plot_surface(X, Y, V_draw, cmap=cm.coolwarm, linewidth=0, antialiased=False, shade=False, *pargs, **kargs)
+        ax.plot_surface(
+            X,
+            Y,
+            V_draw,
+            cmap=cm.coolwarm,
+            linewidth=0,
+            antialiased=False,
+            shade=False,
+            *args,
+            **kwargs,
+        )
         ax.scatter(
-            non_nan_x_1d_array, non_nan_y_1d_array, non_nan_v_1d_array, marker="o", c="b", s=100, depthshade=True
+            non_nan_x_1d_array,
+            non_nan_y_1d_array,
+            non_nan_v_1d_array,
+            marker="o",
+            c="b",
+            s=100,
+            depthshade=True,
         )
 
         ax.set_xlabel("X")
         ax.set_ylabel("Y")
 
-    def draw_3d_deterministic_action_value_fcn_values(self, ax, actions_value_fcn_dict, *pargs, **kargs):
+    def draw_3d_deterministic_action_value_fcn_values(
+        self, ax, actions_value_fcn_dict, *args, **kwargs
+    ):
 
         x_list = range(self.width)
         y_list = range(self.height)
@@ -379,10 +444,10 @@ class GridWorld(DeterministicEnvironment):
 
                 V[row_idx, col_idx] = value_fcn_value
 
-        self._draw_3d_value_fcn_values(ax, X, Y, V, *pargs, **kargs)
+        self._draw_3d_value_fcn_values(ax, X, Y, V, *args, **kwargs)
         ax.set_zlabel("Deterministic Action Value Function")
 
-    def draw_3d_state_value_fcn_values(self, ax, state_value_fcn_dict, *pargs, **kargs):
+    def draw_3d_state_value_fcn_values(self, ax, state_value_fcn_dict, *args, **kwargs):
 
         x_list = range(self.width)
         y_list = range(self.height)
@@ -402,7 +467,7 @@ class GridWorld(DeterministicEnvironment):
 
                 V[row_idx, col_idx] = value_fcn_value
 
-        self._draw_3d_value_fcn_values(ax, X, Y, V, *pargs, **kargs)
+        self._draw_3d_value_fcn_values(ax, X, Y, V, *args, **kwargs)
         ax.set_zlabel("State Value Function")
 
 
@@ -411,8 +476,8 @@ class GridWorldWithCliff(GridWorld):
     Grid world Markov decision process (MDP) with cliff.
     """
 
-    def __init__(self, *pargs, **kargs):
-        super(GridWorldWithCliff, self).__init__(*pargs, **kargs)
+    def __init__(self, *args, **kwargs):
+        super(GridWorldWithCliff, self).__init__(*args, **kwargs)
         self.__initialize()
 
     def __initialize(self):
@@ -420,7 +485,9 @@ class GridWorldWithCliff(GridWorld):
         self.set_terminal_states([(self.width - 1, 0)])
 
     def apply_action(self, action):
-        current_state, reward, is_terminal_state, info = super(GridWorldWithCliff, self).apply_action(action)
+        current_state, reward, is_terminal_state, info = super(
+            GridWorldWithCliff, self
+        ).apply_action(action)
 
         x, y = self.current_state
         if not is_terminal_state and (x > 0 and x < self.width - 1 and y == 0):

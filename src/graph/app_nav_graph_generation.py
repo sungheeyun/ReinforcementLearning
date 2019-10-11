@@ -22,7 +22,7 @@ def get_x_coor(index: int, total_num: int, margin: float = 0.0) -> float:
 
 
 def generate_app_navigation_graph(
-        shortest_path_length: int, num_layers: int, layer_size_reduction_rate: float = 0.8
+        shortest_path_length: int
 ) -> AppNavGraph:
 
     app_nav_graph: nx.DiGraph = nx.DiGraph()
