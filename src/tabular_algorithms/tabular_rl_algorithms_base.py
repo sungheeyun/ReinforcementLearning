@@ -64,7 +64,7 @@ class TabularRLAlgorithmBase(ABC):
 
         Parameters
         ----------
-        ax:
+        axis:
             Subplot Axes.
         *args: tuple
             Argument list for plotting.

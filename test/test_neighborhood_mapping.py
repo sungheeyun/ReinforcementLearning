@@ -13,7 +13,7 @@ from utils import set_logging_basic_config, get_pretty_json_str
 from policy.utils import action_sequence_json_obj_to_action_value_fcn_dict
 from environment.deterministic_directed_graph_environment import (
     DeterministicDirectedGraphEnvironment,
-    read_deterministic_directed_graph_environment_from_json,
+    create_deterministic_directed_graph_environment_from_json_obj
 )
 from policy.epsilon_greedy_policy_sampler import EpsilonGreedyPolicySampler
 from tabular_algorithms.one_step_temporal_difference_algorithm import (
@@ -61,9 +61,13 @@ class TestNeighborhoodMapping(unittest.TestCase):
 
     def test_neighborhood_mapping_with_simple_example(self) -> None:
 
+        deterministic_directed_graph_environment_json_dict: Dict[str, Any]
+        with open(TestNeighborhoodMapping.simple_deterministic_state_transition_graph_json_file_path) as fin:
+            deterministic_directed_graph_environment_json_dict = json.load(fin)
+
         deterministic_directed_graph_environment: DeterministicDirectedGraphEnvironment = (
-            read_deterministic_directed_graph_environment_from_json(
-                TestNeighborhoodMapping.simple_deterministic_state_transition_graph_json_file_path
+            create_deterministic_directed_graph_environment_from_json_obj(
+                deterministic_directed_graph_environment_json_dict
             )
         )
 
@@ -122,9 +126,7 @@ class TestNeighborhoodMapping(unittest.TestCase):
         one_step_temporal_difference_alg.plot_value_fcn_history(axis)
         figure.show()
 
-        logger.info(
-            get_pretty_json_str(one_step_temporal_difference_alg.state_value_fcn_dict)
-        )
+        logger.info(get_pretty_json_str(one_step_temporal_difference_alg.state_value_fcn_dict))
 
         default_action_value_fcn_value: float = np.array(
             list(one_step_temporal_difference_alg.state_value_fcn_dict.values()), float
@@ -161,9 +163,13 @@ class TestNeighborhoodMapping(unittest.TestCase):
 
     def test_neighborhood_mapping_with_large_example(self) -> None:
 
+        deterministic_directed_graph_environment_json_dict: Dict[str, Any]
+        with open(TestNeighborhoodMapping.large_deterministic_state_transition_graph_json_file_path) as fin:
+            deterministic_directed_graph_environment_json_dict = json.load(fin)
+
         deterministic_directed_graph_environment: DeterministicDirectedGraphEnvironment = (
-            read_deterministic_directed_graph_environment_from_json(
-                TestNeighborhoodMapping.large_deterministic_state_transition_graph_json_file_path
+            create_deterministic_directed_graph_environment_from_json_obj(
+                deterministic_directed_graph_environment_json_dict
             )
         )
 
@@ -224,9 +230,7 @@ class TestNeighborhoodMapping(unittest.TestCase):
         one_step_temporal_difference_alg.plot_value_fcn_history(axis)
         figure.show()
 
-        logger.info(
-            get_pretty_json_str(one_step_temporal_difference_alg.state_value_fcn_dict)
-        )
+        logger.info(get_pretty_json_str(one_step_temporal_difference_alg.state_value_fcn_dict))
 
         default_action_value_fcn_value: float = np.array(
             list(one_step_temporal_difference_alg.state_value_fcn_dict.values()), float

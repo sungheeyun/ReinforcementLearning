@@ -1,5 +1,4 @@
 from typing import Dict, Any, Tuple, List
-import json
 from logging import getLogger
 
 from environment.deterministic_environment import DeterministicEnvironment
@@ -19,20 +18,18 @@ class DeterministicDirectedGraphEnvironment(DeterministicEnvironment):
         state_transition_dict: Dict[Any, Dict[Any, Any]],
         reward_dict: Dict[Any, Dict[Any, float]],
     ):
-        self.state_transition_graph_dict: Dict[
-            Any, Dict[Any, Any]
-        ] = state_transition_dict
+        self.state_transition_graph_dict: Dict[Any, Dict[Any, Any]] = state_transition_dict
         self.state_transition_reward_dict: Dict[Any, Dict[Any, float]] = reward_dict
-        self.start_state = start_state
-        self.goal_state = goal_state
+        self.start_state: Any = start_state
+        self.goal_state: Any = goal_state
 
-        self.current_state = None
+        self.current_state: Any = None
 
         self._check_attributes()
 
     def _check_attributes(self) -> None:
         if self.start_state not in self.state_transition_graph_dict:
-            raise KeyError(f"self.start_state should be in self.directed_graph_dict.")
+            raise KeyError(f"self.start_state should be in self.state_transition_graph_dict")
 
     def reset(self) -> Tuple[Any, Any]:
         self.current_state = self.start_state
@@ -45,11 +42,10 @@ class DeterministicDirectedGraphEnvironment(DeterministicEnvironment):
         self.current_state = state
         return self.current_state, None
 
-    def apply_action(self, action: Any) -> Tuple[Any, Any, bool, Any]:
+    def apply_action(self, action: Any) -> Tuple[Any, float, bool, Any]:
         current_state: Any = self.current_state
-        next_state: Any
 
-        next_state = self.state_transition_graph_dict[current_state][action]
+        next_state: Any = self.state_transition_graph_dict[current_state][action]
         reward: float = self.state_transition_reward_dict[current_state][action]
 
         self.current_state = next_state
@@ -68,16 +64,9 @@ class DeterministicDirectedGraphEnvironment(DeterministicEnvironment):
         return self.current_state == self.goal_state
 
 
-def read_deterministic_directed_graph_environment_from_json(
-    json_file_path: str
+def create_deterministic_directed_graph_environment_from_json_obj(
+        deterministic_directed_graph_environment_json_dict: Dict[str, Any]
 ) -> DeterministicDirectedGraphEnvironment:
-    # TODO have this function take as an input dict obtained by parsing a json file, not json file name! And of course,
-    # TODO and make proper changes accordingly wherever this function is called.
-
-    with open(json_file_path) as fin:
-        deterministic_directed_graph_environment_json_dict: Dict[str, Any] = json.load(
-            fin
-        )
 
     start_state = deterministic_directed_graph_environment_json_dict["StartState"]
     goal_state = deterministic_directed_graph_environment_json_dict["GoalState"]

@@ -101,54 +101,84 @@ class EnvironmentBase(ABC):
         pass
 
     def draw_state_value_fcn_values(
-        self, ax: Axes, state_value_fcn_dict: Dict[Any, float], *args, **kwargs
-    ):
+            self,
+            ax: Axes,
+            state_value_fcn_dict: Dict[Any, float],
+            *args,
+            **kwargs
+    ) -> None:
         """
         Draws the values of the state value functions.
         """
         pass
 
     def draw_actions_value_fcn_values(
-        self,
-        ax: Axes,
-        actions_value_fcn_dict: Dict[Any, Dict[Any, float]],
-        *args,
-        **kwargs
-    ):
+            self,
+            ax: Axes,
+            actions_value_fcn_dict: Dict[Any, Dict[Any, float]],
+            *args,
+            **kwargs
+    ) -> None:
         """
         Draws the values of the action value functions.
         """
         pass
 
     def draw_deterministic_actions_value_fcn_values(
-        self, ax, actions_value_fcn_dict, *args, **kwargs
-    ):
+            self,
+            ax: Axes,
+            actions_value_fcn_dict: Dict[Any, Dict[Any, float]],
+            *args,
+            **kwargs
+    ) -> None:
         """
         Draws the values of the action value functions.
         """
         pass
 
-    def draw_deterministic_actions(self, ax, actions_value_fcn_dict, *args, **kwargs):
+    def draw_deterministic_actions(
+            self,
+            ax: Axes,
+            actions_value_fcn_dict: Dict[Any, Dict[Any, float]],
+            *args,
+            **kwargs
+    ) -> None:
         """
         Draws best actions.
         """
         pass
 
-    def draw_boltzmann_actions(self, ax, actions_value_fcn_dict, *args, **kwargs):
+    def draw_boltzmann_actions(
+            self,
+            ax: Axes,
+            actions_value_fcn_dict: Dict[Any, Dict[Any, float]],
+            *args,
+            **kwargs
+    ) -> None:
         """
         Draws all actions based on Boltzmann distribution.
         """
         pass
 
-    def draw_3d_state_value_fcn_values(self, ax, state_value_fcn_dict, *args, **kwargs):
+    def draw_3d_state_value_fcn_values(
+            self,
+            ax: Axes,
+            state_value_fcn_dict: Dict[Any, float],
+            *args,
+            **kwargs
+    ) -> None:
         """
         Draws the values of the state value functions.
         """
         pass
 
     def draw_3d_deterministic_action_value_fcn_values(
-        self, ax, actions_value_fcn_dict, *args, **kwargs
-    ):
+            self,
+            ax: Axes,
+            actions_value_fcn_dict: Dict[Any, Dict[Any, float]],
+            *args,
+            **kwargs
+    ) -> None:
         """
         Draws the values of the action value functions.
         """

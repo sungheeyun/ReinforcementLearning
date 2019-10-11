@@ -6,6 +6,8 @@
       <w>fout</w>
       <w>iters</w>
       <w>sarsa</w>
+      <w>xlim</w>
+      <w>ylim</w>
     </words>
   </dictionary>
 </component>

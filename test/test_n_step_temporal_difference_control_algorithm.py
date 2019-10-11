@@ -5,7 +5,8 @@ from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 from utils import state_value_fcn_dict_to_str, action_value_fcn_dict_to_pretty_str, set_logging_basic_config
-from environment.grid_world_environment import GridWorld, GridWorldWithCliff
+from environment.grid_world_environment import GridWorld
+from environment.grid_world_with_cliff_environment import GridWorldWithCliff
 from policy.probabilistic_policy import ProbabilisticPolicy
 from policy.epsilon_greedy_policy_sampler import EpsilonGreedyPolicySampler
 from tabular_algorithms.n_step_q_learning_algorithm import NStepQLearningAlgorithm
