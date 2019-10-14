@@ -1,1 +1,1 @@
-# tabular_rl
+# Python implementation of Reinforcement Learning Algorithms
